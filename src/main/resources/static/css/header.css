@@ -1,0 +1,50 @@
+.personal-box-container {
+    position: relative;
+}
+
+.personal-box {
+    right: 0px;
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: absolute !important;
+    min-width: 255px;
+    padding: 10px;
+    transition: 0.4s;
+}
+
+.personal-box-hide {
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    opacity: 0;
+}
+
+.personal-icon {
+    margin-right: 20px;
+}
+
+.avatar-with-name {
+    display: flex;
+    width: fit-content;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.avatar-medium {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}

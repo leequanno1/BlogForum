@@ -1,0 +1,18 @@
+main {
+    min-height: 900px;
+}
+
+.profile-header {
+    margin-bottom: 30px;
+}
+
+.btn-justify {
+    height: fit-content;
+    align-self: center;
+}
+
+/* Định dạng cho thanh điều hướng */
+.nav-pills {
+    border: 1px solid #dee2e6; /* Thêm viền */
+    border-radius: 5px; /* Bo tròn viền */
+}

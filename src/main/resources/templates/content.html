@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viblo Clone - Bài viết</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/content.html.css}">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="text-light bg-info py-3 header-shadow">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="#" class="text-light logo">Web Logo</a>
+            <nav>
+                <ul class="list-unstyled d-flex m-0 align-items-center">
+                    <li class="mr-3">
+                        <form action="#" method="get">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search..."
+                                    aria-label="Recipient's username" aria-describedby="button-addon2">
+                                <div class="input-group-append">
+                                    <button class="btn btn-secondary text-light" type="button" id="button-addon2"><i
+                                            class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                    <li class="mr-3"><a href="#" class="text-light">Viết bài</a></li>
+                    <li class="mr-3"><a href="#" class="text-light">Thông báo</a></li>
+                    <li>
+                        <div>
+                            <label class="m-0" for="smallAvt">
+                                <img src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
+                                    alt="Avatar" class="profile-avatar avatar-small mr-0">
+                            </label>
+                            <input type="checkbox" class="d-none" name="smallAvt" id="smallAvt">
+                            <span class="personal-box-container">
+                                <div class="personal-box personal-box-hide card bg-info" id="personalBox">
+                                    <div class="profile-header d-flex justify-content-start">
+                                        <div class="avatar-with-name">
+                                            <img src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
+                                                alt="Avatar" class="profile-avatar avatar-medium mr-3">
+                                            <div class="flex-column justify-content-start mr-5">
+                                                <span class="mt-3 visible-name">Tên Hiển Thị</span>
+                                                <p class="text-muted">@tenhienthi</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="mb-3 text-light">
+                                        <i class="personal-icon fa-solid fa-user"></i>
+                                        Trang cá nhân
+                                    </a>
+                                    <a href="#" class="text-light">
+                                        <i class="personal-icon fa-solid fa-arrow-right-from-bracket"></i>
+                                        Đăng xuất
+                                    </a>
+                                </div>
+                            </span>
+                            </select>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-2 sidebar">
+                    <div class="d-flex flex-column align-items-center sticky-top">
+                        <label id="upvote" for="isUpvote" class="btn btn-outline-success mb-2"><i class="fa-solid fa-caret-up"></i></label>
+                        <input id="isUpvote" class="d-none" type="checkbox">
+
+                        <span class="mb-2"><span id="vote">0</span> Votes</span>
+
+                        <label id="downvote" for="isDownvote" class="btn btn-outline-danger mb-2 "><i class="fa-solid fa-caret-down"></i></label>
+                        <input id="isDownvote" class="d-none" type="checkbox">
+
+                        <label id="bookmark" for="isBookmark" class="btn btn-outline-primary mb-2 "><i id="bookmarkIcon" class="far fa-bookmark"></i></label>
+                        <input id="isBookmark" class="d-none" type="checkbox">
+                    </div>
+                </div>
+                <!-- Content -->
+                <div class="col-lg-9">
+                    <article class="mb-5">
+                        <h1 class="mb-3">Tiêu đề bài viết</h1>
+                        <div class="d-flex align-items-center mb-3 sticky-top author-info">
+                            <img src="https://scontent.fdad3-1.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=_IqS1bxHi_0Q7kNvgFDLGOH&_nc_ht=scontent.fdad3-1.fna&oh=00_AfB2ZQ5Z3SXf1QSPY9uiRG-zOcfPRnVfnAYlbZ2zLsuL6g&oe=66376F03"
+                                alt="Avatar" class="avatar mr-3">
+                            <div>   
+                                <span class="text-muted">Tác giả: </span>
+                                <a href="#"><span>Author Name</span></a>
+                            </div>
+                            <div class="ml-auto">
+                                <!-- <button type="button" class="btn btn-primary">Theo dõi</button> -->
+                                <label id="follow" for="isFollow" class="btn btn-primary">Theo dõi</label>
+                                <input id="isFollow" class="d-none" type="checkbox">
+                            </div>
+                        </div>
+                        <p class="text-muted mb-4">Thời gian đăng bài viết: April 30, 2024</p>
+                        <p>
+                            Nội dung bài viết...
+                        </p>
+                        <!-- Next Posts -->
+                        <div class="mt-4">
+                            <h3>Bài viết tiếp theo</h3>
+                            <div class="d-flex flex-wrap justify-content-between">
+                                <!-- Sample next post -->
+                                <div class="card mb-3 next-post">
+                                    <div class="card-body">
+                                        <a href="#"><h5 class="card-title">Tiêu đề bài viết</h5></a>
+                                        <p class="card-text">Tác giả: <a href="#">Author Name</a></p>
+                                        <p class="card-text">100 Votes</p>
+                                    </div>
+                                </div>
+                                <!-- Add more next posts here -->
+                                <div class="card mb-3 next-post">
+                                    <div class="card-body">
+                                        <a href="#"><h5 class="card-title">Tiêu đề bài viết</h5></a>
+                                        <p class="card-text">Tác giả: <a href="#">Author Name</a></p>
+                                        <p class="card-text">100 Votes</p>
+                                    </div>
+                                </div>
+                                <div class="card mb-3 next-post">
+                                    <div class="card-body">
+                                        <a href="#"><h5 class="card-title">Tiêu đề bài viết</h5></a>
+                                        <p class="card-text">Tác giả: <a href="#">Author Name</a></p>
+                                        <p class="card-text">100 Votes</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Bình luận -->
+                        <div class="comments mt-4">
+                            <h3>Bình luận</h3>
+                            <!-- Form bình luận -->
+                            <div>
+                                <div class="form-group">
+                                    <textarea id="commentContent" class="form-control" rows="3"
+                                        placeholder="Nhập bình luận của bạn"></textarea>
+                                </div>
+                                <button type="button" id="sendCommentButton" class="btn btn-primary">Gửi</button>
+                            </div>
+                            <!-- Danh sách bình luận -->
+                            <div id="commentList" class="comment-list mt-3">
+                                <!-- Mỗi comment -->
+                                <div class="comment mb-3">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="https://scontent.fdad3-1.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=_IqS1bxHi_0Q7kNvgFDLGOH&_nc_ht=scontent.fdad3-1.fna&oh=00_AfB2ZQ5Z3SXf1QSPY9uiRG-zOcfPRnVfnAYlbZ2zLsuL6g&oe=66376F03"
+                                            alt="Avatar" class="avatar mr-3">
+                                        <div>
+                                            <span class="font-weight-bold">User Name</span>
+                                        </div>
+                                    </div>
+                                    <p>Bình luận của người dùng...</p>
+                                </div>
+                                <!-- Thêm các comment khác tại đây -->
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-3">
+        <div class="container">
+            <p class="m-0">&copy; 2024 Viblo Clone</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and custom JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script th:src="@{js/header.js}"></script>
+    <script th:src="@{js/content.html.js}"></script>
+</body>
+
+</html>

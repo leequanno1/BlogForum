@@ -1,0 +1,27 @@
+/* Custom CSS */
+.next-post {
+    width: calc(33.33% - 10px);
+    /* Căn chỉnh kích thước của mỗi thẻ bài viết tiếp theo */
+    margin-right: 5px;
+    /* Khoảng cách giữa các thẻ bài viết */
+}
+
+/* Dịch chuyển phần main xuống dưới một ít */
+main {
+    margin-top: 50px;
+    /* Độ dịch chuyển */
+}
+
+.sidebar > div {
+    top: 100px
+}
+
+.author-info {
+    top: 72px;
+    background: #fff;
+    z-index: 1;
+}
+
+.bookmark-checked {
+    background-color: #007bff;
+}
