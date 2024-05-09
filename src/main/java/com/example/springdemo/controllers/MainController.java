@@ -15,17 +15,13 @@ public class MainController {
         return "index";
     }
 
-    @PostMapping("/login")
-    public String login(@RequestParam("username") String username, @RequestParam("password") String password) {
-        try{
-            UserAccountService service = new UserAccountService();
-            if(service.getUser(username, password)){
-                return "hello";
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "index1";
+    @GetMapping("/content")
+    public String showContent(Model model) {
+        return "content";
     }
 
+    @GetMapping("/personal")
+    public String showPersonal (Model model) {
+        return "personal";
+    }
 }
