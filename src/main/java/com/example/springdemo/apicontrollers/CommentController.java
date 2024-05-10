@@ -3,10 +3,7 @@ package com.example.springdemo.apicontrollers;
 import com.example.springdemo.services.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -120,7 +117,7 @@ public class CommentController {
      * Otherwise, return status code: INTERNAL_SERVER_ERROR.
      * @param request Request body contain 2 key: "userId", "commentId".
      * */
-    @PutMapping("/api/comment/delete")
+    @DeleteMapping("/api/comment/delete")
     public ResponseEntity deleteComment(@RequestBody Map<String, String> request) {
         CommentService commentService = new CommentService();
         int userId = Integer.parseInt(request.get("userId"));
