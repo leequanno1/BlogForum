@@ -1,6 +1,7 @@
 package com.example.springdemo.apicontrollers;
 
 import com.example.springdemo.services.CommentService;
+import com.example.springdemo.services.StatusBodyMessageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class CommentController {
         int articleId = Integer.parseInt(request.get("articleId"));
         List<Object> comments = commentService.getAll(articleId);
         if(comments.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CommentService.createMessage("NOT_FOUND"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StatusBodyMessageService.statusNotFound());
         }
         return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
@@ -43,7 +44,7 @@ public class CommentController {
         int articleId = Integer.parseInt(request.get("articleId"));
         Map<String,Integer> quantity = commentService.getQuantity(articleId);
         if(quantity.get("quantity") == 0) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CommentService.createMessage("NOT_FOUND"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StatusBodyMessageService.statusNotFound());
         }
         return ResponseEntity.status(HttpStatus.OK).body(quantity);
     }
@@ -63,7 +64,7 @@ public class CommentController {
         int articleId = Integer.parseInt(request.get("articleId"));
         Map<String, Object> comments = commentService.getLatestComment(userId,articleId);
         if(comments.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CommentService.createMessage("NOT_FOUND"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StatusBodyMessageService.statusNotFound());
         }
         return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
@@ -83,9 +84,9 @@ public class CommentController {
         String content = request.get("content");
         boolean isInserted = commentService.createNewComment(userId,articleId,content);
         if(isInserted) {
-            return ResponseEntity.status(HttpStatus.OK).body(CommentService.createMessage("OK"));
+            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CommentService.createMessage("INTERNAL_SERVER_ERROR"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
     }
 
     /**
@@ -104,9 +105,9 @@ public class CommentController {
         String content = request.get("content");
         boolean isUpdated = commentService.updateComment(userId,commentId,content);
         if(isUpdated) {
-            return ResponseEntity.status(HttpStatus.OK).body(CommentService.createMessage("OK"));
+            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CommentService.createMessage("INTERNAL_SERVER_ERROR"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
     }
 
     /**
@@ -124,8 +125,8 @@ public class CommentController {
         int commentId = Integer.parseInt(request.get("commentId"));
         boolean isUpdated = commentService.deleteComment(userId,commentId);
         if(isUpdated) {
-            return ResponseEntity.status(HttpStatus.OK).body(CommentService.createMessage("OK"));
+            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CommentService.createMessage("INTERNAL_SERVER_ERROR"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
     }
 }

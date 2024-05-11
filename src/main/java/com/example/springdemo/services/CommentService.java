@@ -227,14 +227,4 @@ public class CommentService extends DatabaseService {
         return false;
     }
 
-    /**
-     * A static service function help create a message
-     * with key: "message"
-     * @param message Message content
-     * */
-    public static Map<String, String> createMessage(String message) {
-        Map<String, String> res = new HashMap<>();
-        res.put("message", message);
-        return res;
-    }
 }
