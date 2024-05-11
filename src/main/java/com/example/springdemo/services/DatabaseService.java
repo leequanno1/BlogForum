@@ -5,7 +5,6 @@ public class DatabaseService {
         SQLServerDataSource ds = new SQLServerDataSource();
         ds.setUser("sa");
         ds.setPassword("123");
-//        ds.setServerName("LAPTOP-52IKI0LN\\SQLEXPRESS");
         ds.setPortNumber(1433);
         ds.setDatabaseName("ForumDB");
         ds.setTrustServerCertificate(true);
