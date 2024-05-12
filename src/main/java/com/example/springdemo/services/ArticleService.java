@@ -6,17 +6,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("ALL")
 public class ArticleService extends DatabaseService{
 
+    /**
+     * SQL query to get Vote value in an article by using article id
+     * */
     private static final String GET_VOTE_VALUE =    "SELECT SUM(CASE WHEN VoteValue = 1 THEN 1 ELSE -1 END) AS TotalVotes\n" +
                                                     "FROM Vote\n" +
                                                     "WHERE ArticleID = ?\n" +
                                                     "GROUP BY ArticleID";
 
+    /**
+     * SQL query to get a list of tag in an article by using article id
+     * */
     private static final String GET_TAG_LIST =      "SELECT [Tag].* FROM [Tag]\n" +
                                                     "INNER JOIN [ArticleTag] ON [Tag].[TagID] = [ArticleTag].[TagID]\n" +
                                                     "WHERE [ArticleTag].[ArticleID] = ?";
 
+    /**
+     * Sub SQL query: the top part of GET_ALL query
+     * */
     private static final String GET_ALL_TOP =       "SELECT * FROM (\n" +
                                                     "\tSELECT ar.[ArticleID], ar.[Title], ar.[CreatedAt], \n" +
                                                     "\tus.[UserID], us.[AvatarURL], us.[Username], us.[DisplayName], \n" +
@@ -26,30 +36,60 @@ public class ArticleService extends DatabaseService{
                                                     "\tINNER JOIN [User] as us ON ar.[UserID] = us.[UserID]\n" +
                                                     "\tLEFT JOIN [Comment] as cmt ON ar.ArticleID = cmt.ArticleID\n";
 
+    /**
+     * Sub SQL query: the bottom part of GET_ALL query
+     * */
     private static final String GET_ALL_BOTTOM =    "\tGROUP BY ar.[ArticleID], ar.[Title], ar.[CreatedAt], \n" +
                                                     "\tus.[UserID], us.[AvatarURL], us.[Username], us.[DisplayName]\n" +
                                                     ") AS RowConstrainedResult\n" +
                                                     "WHERE RowNum BETWEEN ? AND ?";
 
+    /**
+     * SQL query to get a list of all article of a page
+     * */
     private static final String GET_ALL =           GET_ALL_TOP + GET_ALL_BOTTOM;
+
+    /**
+     * SQL query to get a list of all article of a page by using user id
+     * */
     private static final String GET_BY_USERID =     GET_ALL_TOP +
                                                     "WHERE us.[UserID] = ?" +
                                                     GET_ALL_BOTTOM;
+
+    /**
+     * SQL query to get a list of all article of a page by using article title
+     * */
     private static final String GET_BY_TITLE =      GET_ALL_TOP +
                                                     "WHERE ar.[Title] LIKE ?" +
                                                     GET_ALL_BOTTOM;
+
+    /**
+     * SQL query to get a list of all article of a page by using tag name
+     * */
     private static final String GET_BY_TAG_NAME =   GET_ALL_TOP +
                                                     "\tINNER JOIN [ArticleTag] AS att ON att.ArticleID = ar.ArticleID\n" +
                                                     "\tINNER JOIN [Tag] ON [Tag].TagID = att.TagID\n" +
                                                     "\tWHERE [Tag].TagName = ?" +
                                                     GET_ALL_BOTTOM;
+
+    /**
+     * SQL query to get a list of all article of a page from a specific date
+     * */
     private static final String GET_FROM_DATE =     GET_ALL_TOP +
                                                     "WHERE ar.[CreatedAt] >= ?" +
                                                     GET_ALL_BOTTOM;
+
+    /**
+     * SQL query to get a list of all article of a page bookmarked by a user
+     * */
     private static final String GET_ALL_BOOKMARK =  GET_ALL_TOP +
                                                     "\tINNER JOIN [Bookmark] as bm ON bm.ArticleID = ar.ArticleID\n" +
                                                     "\tWHERE bm.UserID = ?" +
                                                     GET_ALL_BOTTOM;
+
+    /**
+     * SQL query to get article information by using article id
+     * */
     private static final String GET_BY_ARTICLE_ID = "SELECT ar.[ArticleID], ar.[Title], ar.[CreatedAt], ar.Content, \n" +
                                                     "us.[UserID], us.[AvatarURL], us.[Username], us.[DisplayName], \n" +
                                                     "(SELECT CASE \n" +
@@ -61,6 +101,10 @@ public class ArticleService extends DatabaseService{
                                                     "INNER JOIN [User] as us ON ar.[UserID] = us.[UserID]\n" +
                                                     "WHERE ar.[ArticleID] = ?";
 
+    /**
+     * Sub service to get vote value of an article by using article ID
+     * @param articleID the article's id
+     * */
     private int getVoteValue(int articleID) {
         int res = 0;
         try (Connection connection = getDataSource().getConnection()) {
@@ -77,6 +121,10 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+    /**
+     * Sub service to get tag list of an article by using article ID
+     * @param articleID the article's id
+     * */
     private List<Object> getTagList(int articleID) {
         List<Object> res = new ArrayList<>();
         try (Connection connection = getDataSource().getConnection()) {
@@ -96,6 +144,11 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+    /**
+     * Sub service to handle get article list
+     * @param res the result article list.
+     * @param preparedStatement the statement contain the SQL query
+     * */
     private void handleGetArticleList(List<Object> res, PreparedStatement preparedStatement) throws SQLException {
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
@@ -117,6 +170,11 @@ public class ArticleService extends DatabaseService{
         }
     }
 
+    /**
+     * Service to get the article list of a page
+     * @param quantity the maximum quantity of a page. Default value is: 6.
+     * @param page the current page of a list. Default value is: 1
+     * */
     public List<Object> getAll(int quantity, int page) {
         List<Object> res = new ArrayList<>();
         try(Connection connection = getDataSource().getConnection()) {
@@ -131,6 +189,12 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+    /**
+     * Service to get the article list of a page by using user id
+     * @param userID the user's id
+     * @param quantity the maximum quantity of a page. Default value is: 6.
+     * @param page the current page of a list. Default value is: 1.
+     * */
     public List<Object> getAllByUserID(int userID ,int quantity, int page) {
         List<Object> res = new ArrayList<>();
         try(Connection connection = getDataSource().getConnection()) {
@@ -146,6 +210,12 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+    /**
+     * Service to get the article list of a page by using article's title.
+     * @param title the article's title.
+     * @param quantity the maximum quantity of a page. Default value is: 6.
+     * @param page the current page of a list. Default value is: 1
+     * */
     public List<Object> getAllByTitle(String title ,int quantity, int page) {
         List<Object> res = new ArrayList<>();
         try(Connection connection = getDataSource().getConnection()) {
@@ -161,6 +231,12 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+    /**
+     * Service to get the article list of a page by using tag name.
+     * @param tagName the provided tag name.
+     * @param quantity the maximum quantity of a page. Default value is: 6.
+     * @param page the current page of a list. Default value is: 1
+     * */
     public List<Object> getAllByTagName(String tagName ,int quantity, int page) {
         List<Object> res = new ArrayList<>();
         try(Connection connection = getDataSource().getConnection()) {
@@ -176,6 +252,12 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+    /**
+     * Service to get the article list of a page from specific date.
+     * @param fromDate the specific date.
+     * @param quantity the maximum quantity of a page. Default value is: 6.
+     * @param page the current page of a list. Default value is: 1
+     * */
     public List<Object> getFromDate(String fromDate ,int quantity, int page) {
         List<Object> res = new ArrayList<>();
         try(Connection connection = getDataSource().getConnection()) {
@@ -191,6 +273,12 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+    /**
+     * Service to get the article list of a page by using bookmark
+     * @param userID the user's id
+     * @param quantity the maximum quantity of a page. Default value is: 6.
+     * @param page the current page of a list. Default value is: 1
+     * */
     public List<Object> getAllBookmark(int userID ,int quantity, int page) {
         List<Object> res = new ArrayList<>();
         try(Connection connection = getDataSource().getConnection()) {
@@ -206,6 +294,11 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+    /**
+     * Service to get an article information by using article id
+     * @param userId the user's id. This param allow null.
+     * @param articleId the article's id, can't null.
+     * */
     public Map<String, Object> getByArticleId(Integer userId, Integer articleId) {
         Map<String, Object> res = new HashMap<>();
         Map<String, Object> user = new HashMap<>();
