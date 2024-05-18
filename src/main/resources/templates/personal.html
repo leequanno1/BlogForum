@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -9,25 +9,25 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" th:href="@{/css/personal.html.css}">
-    <link rel="stylesheet" th:href="@{css/header.css}">
+    <link rel="stylesheet" href="/css/personal.html.css">
+    <link rel="stylesheet" href="/css/header.css">
 </head>
 
 <body>
     <!-- Header -->
-    <div th:replace="fragments/unlogged_header :: logged_header"></div>
+    <div th:replace="fragments/logged_header :: logged_header"></div>
 
     <!-- Main Content -->
-    <main class="py-5">
+    <main class="py-5 pt-5">
         <div class="container">
             <!-- Profile Header -->
             <div class="profile-header d-flex justify-content-start">
                 <div class="avatar-with-name">
-                    <img src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
+                    <img th:src="${userInfo.AvatarURL}"
                         alt="Avatar" class="profile-avatar mr-3">
                     <div class="flex-column justify-content-start mr-5">
-                        <h3 class="mt-3">Tên Hiển Thị</h3>
-                        <p class="text-muted">@tenhienthi</p>
+                        <h3 class="mt-3" th:text="${userInfo.DisplayName}"></h3>
+                        <p class="text-muted" th:text="'@'+${userInfo.Username}"></p>
                     </div>
                 </div>
                 <a class="btn btn-primary btn-justify" href="#">Sửa</a>
@@ -35,16 +35,18 @@
             
             <!-- Navigation Bar -->
             <nav class="nav nav-pills justify-content-left mb-3 ">
-                <a id="navPosts" class="nav-link active" href="/personal/posts">Bài Viết</a>
+                <a id="navPosts" class="nav-link" href="/personal/posts">Bài Viết</a>
                 <a id="navBookmark" class="nav-link" href="/personal/bookmark">Bookmark</a>
                 <a id="navFollowedPosts" class="nav-link" href="/personal/followedposts">Bài Viết Đang Theo Dõi</a>
                 <a id="navFollowedUsers" class="nav-link" href="/personal/followedusers">Người Đang Theo Dõi</a>
-                <a id="navFollower" class="nav-link" href="/personal/follower">Người Theo Dõi</a>
+                <a id="navFollowers" class="nav-link" href="/personal/followers">Người Theo Dõi</a>
             </nav>
             <!-- Content -->
-            <div  class="content" >
-                <!-- Your content here -->
-            </div>
+            <div class="content" th:if="${nav == 'posts'}" th:include="fragments/personal/posts :: posts"></div>
+            <div class="content" th:if="${nav == 'bookmark'}" th:include="fragments/personal/bookmark :: bookmark"></div>
+            <div class="content" th:if="${nav == 'followedposts'}" th:include="fragments/personal/followed_posts :: followedposts"></div>
+            <div class="content" th:if="${nav == 'followedusers'}" th:include="fragments/personal/followed_users :: followedusers"></div>
+            <div class="content" th:if="${nav == 'follower'}" th:include="fragments/personal/followers :: followers"></div>
 
 
         </div>
