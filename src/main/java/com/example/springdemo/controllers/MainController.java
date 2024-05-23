@@ -20,4 +20,9 @@ public class MainController {
         return "index";
     }
 
+    @GetMapping("/write")
+    public String writeNew(Model model) {
+        return "write_new_article";
+    }
+
 }

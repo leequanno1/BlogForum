@@ -31,7 +31,7 @@ public class ArticleService extends DatabaseService{
                                                     "\tSELECT ar.[ArticleID], ar.[Title], ar.[CreatedAt], \n" +
                                                     "\tus.[UserID], us.[AvatarURL], us.[Username], us.[DisplayName], \n" +
                                                     "\tCOUNT(cmt.CommentID) as Comments,\n" +
-                                                    "\tROW_NUMBER() OVER (ORDER BY ar.[ArticleID]) AS RowNum\n" +
+                                                    "\tROW_NUMBER() OVER (ORDER BY ar.[CreatedAt] DESC) AS RowNum\n" +
                                                     "\tFROM [Article] as ar\n" +
                                                     "\tINNER JOIN [User] as us ON ar.[UserID] = us.[UserID]\n" +
                                                     "\tLEFT JOIN [Comment] as cmt ON ar.ArticleID = cmt.ArticleID\n";

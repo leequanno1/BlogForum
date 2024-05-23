@@ -4,7 +4,6 @@ import com.example.springdemo.services.ArticleService;
 import com.example.springdemo.services.UserService;
 import com.example.springdemo.services.controllerservices.CookieService;
 import com.example.springdemo.services.controllerservices.UserInfoService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
