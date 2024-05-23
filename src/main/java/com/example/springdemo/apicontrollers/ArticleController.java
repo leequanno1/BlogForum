@@ -1,10 +1,12 @@
 package com.example.springdemo.apicontrollers;
 
 import com.example.springdemo.services.ArticleService;
+import com.example.springdemo.services.CloudsDiaryService;
 import com.example.springdemo.services.StatusBodyMessageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 public class ArticleController {
 
+    private CloudsDiaryService cloudsDiaryService = new CloudsDiaryService();
     private final int DEFAULT_QUANTITY = 6;
 
     private final int DEFAULT_PAGE = 1;
@@ -239,5 +242,11 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StatusBodyMessageService.statusNotFound());
     }
 
-
+    @PostMapping("/api/article/new")
+    public ResponseEntity newArticle(@RequestParam("content") String content,
+                                     @RequestParam("tags") String tags,
+                                     @RequestParam("images") List<MultipartFile> images) {
+        List<String> urlList = cloudsDiaryService.uploadImages(images);
+        return ResponseEntity.status(HttpStatus.OK).body(urlList);
+    }
 }

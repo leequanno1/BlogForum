@@ -16,6 +16,14 @@ const setScrollBarContent = function (htmlString) {
 }
 
 const handelDeleteTag = function (id) {
+    let tagList = document.getElementById("tagList");
+    tagListContent = tagList.value.split(" ").map( tagId => {
+        if("tag_"+tagId === id) {
+            return "";
+        }
+        return tagId;
+    }).join(" ");
+    tagList.value = tagListContent.trim();
     tagContainer.removeChild(document.getElementById(id));
 }
 
@@ -40,6 +48,7 @@ const handelDOMTag = function(id, name) {
                     <span>${name}</span>
                     <i class="fa-sharp fa-solid fa-circle-xmark" onclick="handelDeleteTag('tag_${id}')"></i>
                 </span>`;
+        document.getElementById("tagList").value = (document.getElementById("tagList").value + ` ${id}`).trim();
     }
     tagInput.value = "";
     hideScrollBar();
