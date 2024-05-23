@@ -1,5 +1,7 @@
 package com.example.springdemo.services;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,6 +103,14 @@ public class ArticleService extends DatabaseService{
                                                     "INNER JOIN [User] as us ON ar.[UserID] = us.[UserID]\n" +
                                                     "WHERE ar.[ArticleID] = ?";
 
+    private static final String INSERT_ARTICLE =    "INSERT INTO [Article]([UserID], [Title], [Content] ,[CreatedAt]) VALUES\n" +
+                                                    "(?,?,?, SYSDATETIME())";
+
+    private static final String INSERT_ARTICLETAG = "INSERT INTO [ArticleTag]([ArticleID],[TagID]) VALUES (?,?)";
+
+    private static final String GET_LASTEST =       "SELECT TOP(1) ArticleID FROM [Article]\n" +
+                                                    "WHERE UserID = ?" +
+                                                    "ORDER BY CreatedAt DESC";
     /**
      * Sub service to get vote value of an article by using article ID
      * @param articleID the article's id
@@ -330,5 +340,122 @@ public class ArticleService extends DatabaseService{
             e.printStackTrace();
         }
         return res;
+    }
+
+    public boolean handelAddNewArticle(Integer userId,
+                                       String articelTitle,
+                                       String articleContent,
+                                       String[] tags,
+                                       List<MultipartFile> images)
+    {
+        CloudsDiaryService cloudsDiaryService = new CloudsDiaryService();
+        List<String> urlList = cloudsDiaryService.uploadImages(images);
+        articleContent = ArticleService.replacePlaceholders(articleContent,urlList);
+
+        try (Connection connection = getDataSource().getConnection()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLE)) {
+                preparedStatement.setInt(1, userId);
+                preparedStatement.setString(2, articelTitle);
+                preparedStatement.setString(3, articleContent);
+                int rowInserted = preparedStatement.executeUpdate();
+                return rowInserted > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public boolean handelAddNewArticleBase64(Integer userId,
+                                       String articleTitle,
+                                       String articleContent,
+                                       String[] tags,
+                                       List<String> images)
+    {
+        CloudsDiaryService cloudsDiaryService = new CloudsDiaryService();
+        List<String> urlList = cloudsDiaryService.uploadImagesBase64(images);
+        articleContent = ArticleService.replacePlaceholders(articleContent,urlList);
+        int articleId = 0;
+        try (Connection connection = getDataSource().getConnection()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLE)) {
+                preparedStatement.setInt(1, userId);
+                preparedStatement.setString(2, articleTitle);
+                preparedStatement.setString(3, articleContent);
+                preparedStatement.executeUpdate();
+            }
+            try(PreparedStatement preparedStatement = connection.prepareStatement(GET_LASTEST)) {
+                preparedStatement.setInt(1, userId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    articleId = resultSet.getInt("ArticleID");
+                }
+            }
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLETAG)) {
+                preparedStatement.setInt(1, articleId);
+                for(String tag: tags) {
+                    preparedStatement.setInt(2, Integer.parseInt(tag));
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static String replacePlaceholders(String original, List<String> replacements) {
+        int index = 0;
+        while (original.contains("[?]") && index < replacements.size()) {
+            original = original.replaceFirst("\\[\\?\\]", replacements.get(index));
+            index++;
+        }
+        return original;
+    }
+
+    private boolean handleInsertArticle (int userId, String articleTitle, String articleContent) {
+        try (Connection connection = getDataSource().getConnection()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLE)) {
+                preparedStatement.setInt(1, userId);
+                preparedStatement.setString(2, articleTitle);
+                preparedStatement.setString(3, articleContent);
+                preparedStatement.executeUpdate();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    private int getLastArticleID(int userId) {
+        int articleId = 0;
+        try (Connection connection = getDataSource().getConnection()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement(GET_LASTEST)) {
+                preparedStatement.setInt(1, userId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    articleId = resultSet.getInt("ArticleID");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return articleId;
+    }
+
+    private boolean handleInsertArticleTag(int articleId, String[] tags) {
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLETAG)) {
+                preparedStatement.setInt(1, articleId);
+                for(String tag: tags) {
+                    preparedStatement.setInt(2, Integer.parseInt(tag));
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

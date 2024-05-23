@@ -3,6 +3,8 @@ package com.example.springdemo.apicontrollers;
 import com.example.springdemo.services.ArticleService;
 import com.example.springdemo.services.CloudsDiaryService;
 import com.example.springdemo.services.StatusBodyMessageService;
+import com.example.springdemo.services.controllerservices.CookieService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -243,10 +245,33 @@ public class ArticleController {
     }
 
     @PostMapping("/api/article/new")
-    public ResponseEntity newArticle(@RequestParam("content") String content,
+    public ResponseEntity newArticle(@RequestParam("title") String title,
+                                     @RequestParam("content") String content,
                                      @RequestParam("tags") String tags,
-                                     @RequestParam("images") List<MultipartFile> images) {
-        List<String> urlList = cloudsDiaryService.uploadImages(images);
-        return ResponseEntity.status(HttpStatus.OK).body(urlList);
+                                     @RequestParam("images") List<MultipartFile> images,
+                                     HttpServletRequest request) {
+        ArticleService articleService = new ArticleService();
+        Integer userId = Integer.parseInt(CookieService.getCookieValue(request, CookieService.cookieUserIdKey));
+        boolean result = articleService.handelAddNewArticle(userId, title, content, tags.split(" "), images);
+        if(result) {
+            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
+    }
+
+    @PostMapping("/api/article/newbase64")
+    public ResponseEntity newArticleBase64(@RequestBody Map<String, Object> param,
+                                     HttpServletRequest request) {
+        String title = (String) param.get("title");
+        String content = (String) param.get("content");
+        String tags = (String) param.get("tags");
+        List<String> images = (List<String>) param.get("images");
+        ArticleService articleService = new ArticleService();
+        Integer userId = Integer.parseInt(CookieService.getCookieValue(request, CookieService.cookieUserIdKey));
+        boolean result = articleService.handelAddNewArticleBase64(userId, title, content, tags.split(" "), images);
+        if(result) {
+            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
     }
 }

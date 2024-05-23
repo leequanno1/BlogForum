@@ -19,7 +19,6 @@ import java.util.Map;
 @RequestMapping("/personal")
 public class PersonalController {
 
-    private String cookieUserIdKey = "serverUserId";
     private int getPageFromParam(Map<String, Object> param) {
         int page = 1;
         if(param.containsKey("page")){
@@ -36,7 +35,7 @@ public class PersonalController {
      * @param request the request information.
      * */
     private String handleRenderPostPage(Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
-        int userId = Integer.parseInt(CookieService.getCookieValue(request,cookieUserIdKey));
+        int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
         UserInfoService.addUserInfoToModel(model,request,session);
         ArticleService articleService = new ArticleService();
         List<Object> postList = articleService.getAllByUserID(userId,6,getPageFromParam(param));
@@ -57,7 +56,7 @@ public class PersonalController {
 
     @GetMapping("/bookmark")
     public String showBookmark (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
-        int userId = Integer.parseInt(CookieService.getCookieValue(request,cookieUserIdKey));
+        int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
         UserInfoService.addUserInfoToModel(model,request,session);
         ArticleService articleService = new ArticleService();
         List<Object> postList = articleService.getAllBookmark(userId,6,getPageFromParam(param));
@@ -68,7 +67,7 @@ public class PersonalController {
 
     @GetMapping("/followedposts")
     public String showFollowedPosts (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
-        int userId = Integer.parseInt(CookieService.getCookieValue(request,cookieUserIdKey));
+        int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
         UserInfoService.addUserInfoToModel(model,request,session);
         model.addAttribute("nav", "followedposts");
         return "personal";
@@ -76,7 +75,7 @@ public class PersonalController {
 
     @GetMapping("/followedusers")
     public String showFollowedUsers (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
-        int userId = Integer.parseInt(CookieService.getCookieValue(request,cookieUserIdKey));
+        int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
         UserInfoService.addUserInfoToModel(model,request,session);
         UserService userService = new UserService();
         List<Map<String, Object>> userList = userService.getAllFollowingUserByUserID(userId);
@@ -87,7 +86,7 @@ public class PersonalController {
 
     @GetMapping("/followers")
     public String showFollower (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
-        int userId = Integer.parseInt(CookieService.getCookieValue(request,cookieUserIdKey));
+        int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
         UserInfoService.addUserInfoToModel(model,request,session);
         UserService userService = new UserService();
         List<Map<String, Object>> userList = userService.getAllFollowUserByUserID(userId);

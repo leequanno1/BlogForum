@@ -8,6 +8,31 @@ postArticle.addEventListener('click' , (e) => {
     console.log(tagList);
     console.log(editorContent);
     console.log(imgUrls);
+    // send formData to server; @RequestParam("title") String title,
+    //                              @RequestParam("content") String content,
+    //                              @RequestParam("tags") String tags,
+    //                              @RequestParam("images") List<MultipartFile> images
+    // /api/article/new
+
+    fetch('/api/article/newbase64', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            title : title,
+            content : editorContent,
+            tags : tagList,
+            images : imgUrls
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 })
 
 let handelArticleContentImageSrc = function (editorData) {
@@ -20,7 +45,7 @@ let handelArticleContentImageSrc = function (editorData) {
     const imgUrls = Array.from(imgElements).map(img => img.src);
 
     imgElements .forEach((img, index) => {
-        img.src = `${apiSourceString}${index + 1}.png`;
+        img.src = `[?]`;
     });
 
     const serializer = new XMLSerializer();
