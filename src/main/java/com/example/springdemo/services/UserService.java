@@ -159,8 +159,6 @@ public class UserService extends DatabaseService {
         return userInfo;
     }
 
-
-
     /**
      * Retrieves email information associated with a UserID from the database.
      *

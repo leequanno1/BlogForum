@@ -2,8 +2,8 @@ package com.example.springdemo.controllers;
 
 import com.example.springdemo.services.ArticleService;
 import com.example.springdemo.services.UserService;
-import com.example.springdemo.services.controllerservices.CookieService;
-import com.example.springdemo.services.controllerservices.UserInfoService;
+import com.example.springdemo.services.CookieService;
+import com.example.springdemo.services.UserInfoService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -19,6 +19,12 @@ import java.util.Map;
 @RequestMapping("/personal")
 public class PersonalController {
 
+    /**
+     * This function help get the 'page' param data.
+     * If there is not 'page' param then the default page is 1.
+     * @param param is a Map param.
+     * @return page number.
+     * */
     private int getPageFromParam(Map<String, Object> param) {
         int page = 1;
         if(param.containsKey("page")){
@@ -44,16 +50,38 @@ public class PersonalController {
         return "personal";
     }
 
+
+    /**
+     * Handle render Personal Post view
+     * @param model model to fill into view.
+     * @param param the request param information.
+     * @param session this user session.
+     * @return personal view at post nav.
+     * */
     @GetMapping("")
     public String showPersonal (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
         return handleRenderPostPage(model, param, request, session);
     }
 
+    /**
+     * Handle render Personal Post view
+     * @param model model to fill into view.
+     * @param param the request param information.
+     * @param session this user session.
+     * @return personal view at post nav.
+     * */
     @GetMapping("/posts")
     public String showPosts (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
         return handleRenderPostPage(model, param, request, session);
     }
 
+    /**
+     * Handle render Personal Post view
+     * @param model model to fill into view.
+     * @param param the request param information.
+     * @param session this user session.
+     * @return personal view at bookmark nav.
+     * */
     @GetMapping("/bookmark")
     public String showBookmark (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
         int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
@@ -65,6 +93,13 @@ public class PersonalController {
         return "personal";
     }
 
+    /**
+     * Handle render Personal Post view
+     * @param model model to fill into view.
+     * @param param the request param information.
+     * @param session this user session.
+     * @return personal view at followed posts nav.
+     * */
     @GetMapping("/followedposts")
     public String showFollowedPosts (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
         int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
@@ -73,6 +108,13 @@ public class PersonalController {
         return "personal";
     }
 
+    /**
+     * Handle render Personal Post view
+     * @param model model to fill into view.
+     * @param param the request param information.
+     * @param session this user session.
+     * @return personal view at followed user nav.
+     * */
     @GetMapping("/followedusers")
     public String showFollowedUsers (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
         int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
@@ -84,6 +126,13 @@ public class PersonalController {
         return "personal";
     }
 
+    /**
+     * Handle render Personal Post view
+     * @param model model to fill into view.
+     * @param param the request param information.
+     * @param session this user session.
+     * @return personal view at follower nav.
+     * */
     @GetMapping("/followers")
     public String showFollower (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request, HttpSession session) {
         int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));

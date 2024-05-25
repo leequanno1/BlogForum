@@ -1,6 +1,5 @@
-package com.example.springdemo.services.controllerservices;
+package com.example.springdemo.services;
 
-import com.example.springdemo.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.ui.Model;

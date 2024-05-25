@@ -11,10 +11,12 @@
 <div th:replace="fragments/unlogged_header :: unlogged_header"></div>
 <main class="main-editor">
     <input id="articleTitle" type="text" class="form-control mb-3" placeholder="Enter article title" aria-label="Recipient's username" aria-describedby="basic-addon2">
+    <div id="alert1" class="alert alert-danger hide-alert" role="alert">
+        You must enter article's title.
+    </div>
     <div class="input-group mb-3">
         <div class="form-control padding_0 flex-row">
             <div id="tagContainer" class="tag-container">
-
             </div>
             <div class="input-tag-container">
                 <input type="text" id="inputTag" class="form-control tag-input" placeholder="Add your tag here. Maximum is 5 and minimum is 1. Tag begin with '#'." aria-label="Recipient's username" aria-describedby="basic-addon2">
@@ -26,6 +28,15 @@
         <div class="input-group-append">
             <button id="postArticle" class="btn btn-primary" type="button" >Post</button>
         </div>
+    </div>
+    <div id="alert2" class="alert alert-danger hide-alert" role="alert">
+        You must enter at least one hashtag.
+    </div>
+    <div id="alert3" class="alert alert-danger hide-alert" role="alert">
+        You can only enter at most 5 hashtags.
+    </div>
+    <div id="alert4" class="alert alert-danger hide-alert" role="alert">
+        You must enter your article's content.
     </div>
     <div id="container">
         <div id="editor">

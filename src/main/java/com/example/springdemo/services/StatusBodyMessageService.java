@@ -12,6 +12,7 @@ public class StatusBodyMessageService {
     /**
      * This function return the custom message value
      * @param message This is the message value
+     * @return custom message body
      * */
     public static Map<String,String > statusMessage(String message) {
         Map<String, String> res = new HashMap<>();

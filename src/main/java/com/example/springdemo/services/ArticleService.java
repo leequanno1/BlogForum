@@ -342,39 +342,25 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+    /**
+     * This fuction handle add an article content with article image is a list of File.
+     * Text article info will be saved in database and the image will be save in cloud.
+     * @param userId number user id.
+     * @param articelTitle string article title.
+     * @param articleContent string article content, this is the html tag will be render.
+     * @param tags the array string of tags.
+     * @param images the list MultipartFile of images.
+     * @return true if succes otherwise return false.
+     * */
     public boolean handelAddNewArticle(Integer userId,
-                                       String articelTitle,
+                                       String articleTitle,
                                        String articleContent,
                                        String[] tags,
                                        List<MultipartFile> images)
     {
         CloudsDiaryService cloudsDiaryService = new CloudsDiaryService();
         List<String> urlList = cloudsDiaryService.uploadImages(images);
-        articleContent = ArticleService.replacePlaceholders(articleContent,urlList);
-
-        try (Connection connection = getDataSource().getConnection()){
-            try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLE)) {
-                preparedStatement.setInt(1, userId);
-                preparedStatement.setString(2, articelTitle);
-                preparedStatement.setString(3, articleContent);
-                int rowInserted = preparedStatement.executeUpdate();
-                return rowInserted > 0;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-
-    public boolean handelAddNewArticleBase64(Integer userId,
-                                       String articleTitle,
-                                       String articleContent,
-                                       String[] tags,
-                                       List<String> images)
-    {
-        CloudsDiaryService cloudsDiaryService = new CloudsDiaryService();
-        List<String> urlList = cloudsDiaryService.uploadImagesBase64(images);
-        articleContent = ArticleService.replacePlaceholders(articleContent,urlList);
+        articleContent = replacePlaceholders(articleContent,urlList);
         int articleId = 0;
         try (Connection connection = getDataSource().getConnection()){
             try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLE)) {
@@ -404,7 +390,61 @@ public class ArticleService extends DatabaseService{
         return true;
     }
 
-    public static String replacePlaceholders(String original, List<String> replacements) {
+    /**
+     * This fuction handle add an article content with article image is a string image data encode by base64.
+     * Text article info will be saved in database and the image will be save in cloud.
+     * @param userId number user id.
+     * @param articelTitle string article title.
+     * @param articleContent string article content, this is the html tag will be render.
+     * @param tags the array string of tags.
+     * @param images the list MultipartFile of images.
+     * @return true if succes otherwise return false.
+     * */
+    public boolean handelAddNewArticleBase64(Integer userId,
+                                       String articleTitle,
+                                       String articleContent,
+                                       String[] tags,
+                                       List<String> images)
+    {
+        CloudsDiaryService cloudsDiaryService = new CloudsDiaryService();
+        List<String> urlList = cloudsDiaryService.uploadImagesBase64(images);
+        articleContent = replacePlaceholders(articleContent,urlList);
+        int articleId = 0;
+        try (Connection connection = getDataSource().getConnection()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLE)) {
+                preparedStatement.setInt(1, userId);
+                preparedStatement.setString(2, articleTitle);
+                preparedStatement.setString(3, articleContent);
+                preparedStatement.executeUpdate();
+            }
+            try(PreparedStatement preparedStatement = connection.prepareStatement(GET_LASTEST)) {
+                preparedStatement.setInt(1, userId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    articleId = resultSet.getInt("ArticleID");
+                }
+            }
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLETAG)) {
+                preparedStatement.setInt(1, articleId);
+                for(String tag: tags) {
+                    preparedStatement.setInt(2, Integer.parseInt(tag));
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * This function replace all "[?]" string into the value in the replacement list.
+     * @param original the original string need to replace
+     * @param replacements the List of String replacement
+     * @return the destination string after replace.
+     * */
+    private String replacePlaceholders(String original, List<String> replacements) {
         int index = 0;
         while (original.contains("[?]") && index < replacements.size()) {
             original = original.replaceFirst("\\[\\?\\]", replacements.get(index));
@@ -413,6 +453,13 @@ public class ArticleService extends DatabaseService{
         return original;
     }
 
+    /**
+     * This function handle insert article into database.
+     * @param userId the user's id
+     * @param articleTitle the article's title
+     * @param articleContent the article's content
+     * @return true if succes otherwise return false.
+     * */
     private boolean handleInsertArticle (int userId, String articleTitle, String articleContent) {
         try (Connection connection = getDataSource().getConnection()){
             try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLE)) {
@@ -428,6 +475,11 @@ public class ArticleService extends DatabaseService{
         return true;
     }
 
+    /**
+     * This function handle get the last article id.
+     * @param userId the user's id that you want to find last article's id.
+     * @return integer article's id, if not found return default value 0.
+     * */
     private int getLastArticleID(int userId) {
         int articleId = 0;
         try (Connection connection = getDataSource().getConnection()){
@@ -444,6 +496,12 @@ public class ArticleService extends DatabaseService{
         return articleId;
     }
 
+    /**
+     * This function handle insert article's tags into database.
+     * @param articleId integer article's id.
+     * @param tags string array of tags
+     * @return true if succes otherwise return false.
+     * */
     private boolean handleInsertArticleTag(int articleId, String[] tags) {
         try (Connection connection = getDataSource().getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLETAG)) {

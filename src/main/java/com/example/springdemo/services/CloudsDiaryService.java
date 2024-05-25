@@ -14,6 +14,13 @@ import java.util.*;
 
 @Service
 public class CloudsDiaryService {
+
+    /**
+     * This function handle upload 1 image into cloud.
+     * @param image the image file
+     * @param savedName String name that you want the image can be saved.
+     * @return the image URL to access cloud.
+     * */
     public String uploadImage(MultipartFile image, String savedName) {
         String endURL = "";
         Map params = ObjectUtils.asMap(
@@ -30,6 +37,11 @@ public class CloudsDiaryService {
         return endURL;
     }
 
+    /**
+     * This function handle upload multiple image into cloud.
+     * @param images list MultipartFile of images.
+     * @return list string of image URL.
+     * */
     public List<String> uploadImages (List<MultipartFile> images) {
         List<String> imageURL = new ArrayList<>();
         for(MultipartFile image : images) {
@@ -39,6 +51,12 @@ public class CloudsDiaryService {
         return imageURL;
     }
 
+    /**
+     * This function handle upload 1 image into cloud.
+     * @param image the image data string encode by base64
+     * @param savedName String name that you want the image can be saved.
+     * @return the image URL to access cloud.
+     * */
     public String uploadImageBase64(String image, String savedName) {
         image = image.split(",")[1];
         String endURL = "";
@@ -56,6 +74,11 @@ public class CloudsDiaryService {
         return endURL;
     }
 
+    /**
+     * This function handle upload multiple image into cloud.
+     * @param images list string of image data encode by base64.
+     * @return list string of image URL.
+     * */
     public List<String> uploadImagesBase64 (List<String> images) {
         List<String> imageURL = new ArrayList<>();
         for(String image : images) {

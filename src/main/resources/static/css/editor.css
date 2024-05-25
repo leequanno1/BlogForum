@@ -113,3 +113,7 @@
 .ck-powered-by {
     display: none;
 }
+
+.hide-alert {
+    display: none;
+}

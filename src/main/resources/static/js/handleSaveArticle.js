@@ -1,6 +1,6 @@
 let postArticle = document.getElementById("postArticle");
 
-postArticle.addEventListener('click' , (e) => {
+postArticle.addEventListener('click' , async (e) => {
     let title = document.getElementById("articleTitle").value;
     let tagList = document.getElementById("tagList").value;
     let {editorContent, imgUrls} = handelArticleContentImageSrc(editor.getData());
@@ -8,53 +8,64 @@ postArticle.addEventListener('click' , (e) => {
         return;
     }
     loadingSpinner();
-    // fetch('/api/article/newbase64', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //         title : title,
-    //         content : editorContent,
-    //         tags : tagList,
-    //         images : imgUrls
-    //     })
-    // })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         console.log(data);
-    //     })
-    //     .catch(error => {
-    //         console.error('Error:', error);
-    //     });
+    await (fetch('/api/article/newbase64', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            title : title,
+            content : editorContent,
+            tags : tagList,
+            images : imgUrls
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        }));
+    doneLoading();
 })
 
 const loadingSpinner = function () {
     postArticle.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Loading...`;
+                Posting...`;
     postArticle.disabled = true;
 }
 
 const doneLoading = function () {
-
+    postArticle.innerHTML = `<i class="fa-regular fa-circle-check"></i>
+                Success`;
+    postArticle.disabled = true;
 }
 
 const validateTitle = function () {
     let title = document.getElementById("articleTitle").value;
     if (title.trim().length > 0) {
-        // message
+        document.getElementById("alert1").classList.add("hide-alert");
         return true;
     } else {
+        document.getElementById("alert1").classList.remove("hide-alert");
         return false;
     }
 }
 
 const validateTag = function () {
     let tagList = document.getElementById("tagList").value;
-    if (tagList.trim().length > 0) {
-        // message
+    if (tagList.trim().length > 0 && tagList.trim().split(" ").length < 6) {
+        document.getElementById("alert2").classList.add("hide-alert");
+        document.getElementById("alert3").classList.add("hide-alert");
         return true;
-    } else {
+    }
+    if (tagList.trim().length === 0) {
+        document.getElementById("alert2").classList.remove("hide-alert");
+        return false;
+    }
+    if (tagList.trim().split(" ").length > 5) {
+        document.getElementById("alert3").classList.remove("hide-alert");
         return false;
     }
 }
@@ -63,8 +74,10 @@ const validateContent = function () {
     let data = editor.getData();
     if (data.trim().length > 0) {
         // message
+        document.getElementById("alert4").classList.add("hide-alert");
         return true;
     } else {
+        document.getElementById("alert4").classList.remove("hide-alert");
         return false;
     }
 }
