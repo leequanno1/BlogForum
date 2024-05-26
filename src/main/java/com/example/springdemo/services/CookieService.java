@@ -10,10 +10,12 @@ public class CookieService {
         String value = null;
         Cookie[] cookies = request.getCookies();
         // Will apply for filter later
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(cookieName)) {
-                value = cookie.getValue();
-                break;
+        if(cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(cookieName)) {
+                    value = cookie.getValue();
+                    break;
+                }
             }
         }
         return value;

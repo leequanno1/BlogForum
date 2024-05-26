@@ -14,6 +14,10 @@ public class ContentController {
     @GetMapping("")
     public String showContent(Model model, HttpServletRequest request) {
         UserInfoService.addUserInfoToModel(model,request);
+
+
+
+
         return "content";
     }
 }
