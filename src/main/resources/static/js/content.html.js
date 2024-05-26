@@ -83,7 +83,8 @@ isDownvote.addEventListener("change", (e) => {
 sendCommentButton.addEventListener("click", (e) => {
     if(commentContent.value) {
         let avt = document.querySelector(".profile-avatar");
-        let visibleName = document.querySelector(".visible-name").innerHTML;
+        let visibleName = document.querySelector(".displayName").innerHTML;
+
         let comment = `<div class="comment mb-3">
                             <div class="d-flex align-items-center mb-3">
                                 <img src="${avt.src}"

@@ -1,0 +1,119 @@
+.main-editor {
+    margin-top: 90px;
+    margin-inline: 20px;
+}
+
+.tag-input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: .375rem .75rem;
+    outline: none;
+}
+
+.tag-container {
+    display: flex;
+}
+
+.input-tag-container {
+    width: 100%;
+    position: relative;
+}
+
+.padding_0 {
+    padding: 0;
+}
+
+.flex-row {
+    display: flex;
+}
+
+.tag {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    background: #dadadd;
+    padding-inline: 5px;
+    border-radius: 5px;
+    max-height: 80%;
+    margin-block: auto;
+    margin-left: .75rem;
+    cursor: pointer;
+}
+
+.tag span {
+
+}
+
+.tag i {
+    margin-block: auto;
+    margin-left: 5px;
+    color: #767681;
+}
+
+.tag i:hover {
+    color: #606169;
+}
+
+.scroll-bar {
+    display: block;
+    width: fit-content;
+    z-index: 2 !important;
+    position: absolute;
+    border-radius: 5px;
+    margin: 0;
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: #292b2c;
+    text-align: left;
+    background-color: #f2f9f9;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.scroll-bar-hide {
+    display: none;
+}
+
+.scroll-bar span {
+    padding-left: 10px;
+    padding-right: 70px;
+    padding-block: 5px;
+}
+
+.scroll-bar span:hover {
+    background: #ddeff0;
+}
+
+.scroll-bar span:active {
+    background: #bfe0e2;
+}
+
+.scroll-bar span {
+    display: block;
+}
+
+#container {
+    /*width: 1000px;*/
+    margin: 20px auto;
+}
+.ck-editor__editable[role="textbox"] {
+    /* Editing area */
+    min-height: 300px;
+}
+.ck-content .image {
+    /* Block images */
+    max-width: 80%;
+    margin: 20px auto;
+}
+
+.ck-powered-by {
+    display: none;
+}
+
+.hide-alert {
+    display: none;
+}

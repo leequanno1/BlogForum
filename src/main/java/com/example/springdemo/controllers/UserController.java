@@ -102,6 +102,7 @@ public class UserController {
             model.addAttribute("resetPasswordForm", new ResetPasswordForm());
         }
 
+
         return "usertemplates/reset_password";
     }
 
@@ -116,7 +117,7 @@ public class UserController {
      * @return a redirect to the home page.
      */
     @PostMapping("/loginProcess")
-    public String loginProcess(@Valid @ModelAttribute("loginForm") LoginForm loginForm, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String loginProcess(@Valid @ModelAttribute("loginForm") LoginForm loginForm, HttpServletRequest request, RedirectAttributes redirectAttributes, HttpServletResponse response) {
         String username, password;
         username = loginForm.getUsername();
         password = loginForm.getPassword();
@@ -132,6 +133,11 @@ public class UserController {
         Map<String, Object> userInfo = userService.getAccountInfoByUserId(userID);
         HttpSession session = request.getSession();
         session.setAttribute("userInfo", userInfo);
+
+        Cookie sessionEmailCookie = new Cookie("SessionUserID", String.valueOf(userID));
+        sessionEmailCookie.setPath("/");
+        sessionEmailCookie.setMaxAge(24 * 60 * 60);
+        response.addCookie(sessionEmailCookie);
 
         return "redirect:/";
     }
@@ -225,7 +231,6 @@ public class UserController {
         return "redirect:/resetPassword";
     }
 
-
     /**
      * Retrieves the value of a cookie by its name.
      *
@@ -268,6 +273,11 @@ public class UserController {
         if (result == -1) {
             redirectAttributes.addFlashAttribute("resetPasswordMessage", "Failed to update password.");
         } else {
+            // Delete SessionEmail cookie
+            Cookie cookie = new Cookie("SessionEmail", null);
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            response.addCookie(cookie);
             redirectAttributes.addFlashAttribute("resetPasswordMessage", "Update password successfully.");
         }
 
@@ -283,7 +293,7 @@ public class UserController {
      * @param response The HTTP response object.
      * @return a redirect to the home page.
      */
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
         // Delete session
         request.getSession().invalidate();

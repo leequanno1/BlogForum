@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:fragment="posts">
+        <link rel="stylesheet" href="/css/personal_posts.css">
+        <div>
+            <h2>Posts go here</h2>
+            <div class="posts">
+                <div th:each="post : ${postList}" class="post">
+                    <a href="#">
+                        <h2 th:text="${post.title}"></h2>
+                    </a>
+                    <div class="author-info d-flex align-items-center">
+                        <a href="#">
+                            <img
+                                    th:src="${post.user.avatarURL}"
+                                    alt="Avatar" class="avatar mr-2">
+                        </a>
+                        <a href="#">
+                            <span class="author" th:text="${post.user.displayName}"></span>
+                        </a>
+                        <a href="#" class="ml-auto">
+                            <span class="date" th:text="${post.createdAt}">April 30, 2024</span>
+                        </a>
+                    </div>
+                    <div class="tags mt-2" >
+                        <a th:each="tag : ${post.tags}" href="#">
+                            <span class="tag mr-1" th:text="${tag.tagName}"></span>
+                        </a>
+                        <!-- Add more tags here -->
+                    </div>
+                    <div class="metrics mt-2">
+                        <span class="comments mr-3" th:text="${post.comments} + ' comment(s)'"></span>
+                        <span class="votes" th:text="${post.votes} + ' vote(s)'"></span>
+                    </div>
+                </div>
+                <!-- Add more posts here -->
+            </div>
+
+        </div>
+        <script src="/js/personalNavHandle.js"></script>
+    </div>
+</body>
+</html>

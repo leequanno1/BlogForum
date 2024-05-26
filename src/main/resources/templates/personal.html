@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -9,79 +9,25 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" th:href="@{/css/personal.html.css}">
-    <link rel="stylesheet" th:href="@{css/header.css}">
+    <link rel="stylesheet" href="/css/personal.html.css">
+    <link rel="stylesheet" href="/css/header.css">
 </head>
 
 <body>
     <!-- Header -->
-    <header class="text-light bg-info py-3 header-shadow">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a href="#" class="text-light logo">Web Logo</a>
-            <nav>
-                <ul class="list-unstyled d-flex m-0 align-items-center">
-                    <li class="mr-3">
-                        <form action="#" method="get">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search..." aria-label="Recipient's username"
-                                    aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button class="btn btn-secondary text-light" type="submit" id="button-addon2"><i
-                                            class="fa-solid fa-magnifying-glass"></i></button>
-                                </div>
-                            </div>
-                        </form>
-                    </li>
-                    <li class="mr-3"><a href="#" class="text-light">Viết bài</a></li>
-                    <li class="mr-3"><a href="#" class="text-light">Thông báo</a></li>
-                    <li>
-                        <div>
-                            <label class="m-0" for="smallAvt">
-                                <img src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
-                                    alt="Avatar" class="profile-avatar avatar-small mr-0">
-                            </label>
-                            <input type="checkbox" class="d-none" name="smallAvt" id="smallAvt">
-                            <span class="personal-box-container">
-                                <div class="personal-box personal-box-hide card bg-info" id="personalBox">
-                                    <div class="d-flex justify-content-start">
-                                        <div class="avatar-with-name">
-                                            <img src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
-                                                alt="Avatar" class="profile-avatar avatar-medium mr-3">
-                                            <div class="flex-column justify-content-start mr-5">
-                                                <span class="mt-3">Tên Hiển Thị</span>
-                                                <p class="text-muted">@tenhienthi</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <a href="#" class="mb-3 text-light">
-                                        <i class="personal-icon fa-solid fa-user"></i>
-                                        Trang cá nhân
-                                    </a>
-                                    <a href="#" class="text-light">
-                                        <i class="personal-icon fa-solid fa-arrow-right-from-bracket"></i>
-                                        Đăng xuất
-                                    </a>
-                                </div>
-                            </span>
-                            </select>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <div th:replace="fragments/logged_header :: logged_header"></div>
 
     <!-- Main Content -->
-    <main class="py-5">
+    <main class="py-5 pt-5">
         <div class="container">
             <!-- Profile Header -->
             <div class="profile-header d-flex justify-content-start">
                 <div class="avatar-with-name">
-                    <img src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
+                    <img th:src="${userInfo.AvatarURL}"
                         alt="Avatar" class="profile-avatar mr-3">
                     <div class="flex-column justify-content-start mr-5">
-                        <h3 class="mt-3">Tên Hiển Thị</h3>
-                        <p class="text-muted">@tenhienthi</p>
+                        <h3 class="mt-3" th:text="${userInfo.DisplayName}"></h3>
+                        <p class="text-muted" th:text="'@'+${userInfo.Username}"></p>
                     </div>
                 </div>
                 <a class="btn btn-primary btn-justify" href="#">Sửa</a>
@@ -89,16 +35,20 @@
             
             <!-- Navigation Bar -->
             <nav class="nav nav-pills justify-content-left mb-3 ">
-                <a class="nav-link active" href="#">Bài Viết</a>
-                <a class="nav-link" href="#">Bookmark</a>
-                <a class="nav-link" href="#">Bài Viết Đang Theo Dõi</a>
-                <a class="nav-link" href="#">Người Đang Theo Dõi</a>
-                <a class="nav-link" href="#">Người Theo Dõi</a>
+                <a id="navPosts" class="nav-link" href="/personal/posts">Bài Viết</a>
+                <a id="navBookmark" class="nav-link" href="/personal/bookmark">Bookmark</a>
+                <a id="navFollowedPosts" class="nav-link" href="/personal/followedposts">Bài Viết Đang Theo Dõi</a>
+                <a id="navFollowedUsers" class="nav-link" href="/personal/followedusers">Người Đang Theo Dõi</a>
+                <a id="navFollowers" class="nav-link" href="/personal/followers">Người Theo Dõi</a>
             </nav>
             <!-- Content -->
-            <div class="content">
-                <!-- Your content here -->
-            </div>
+            <div class="content" th:if="${nav == 'posts'}" th:include="fragments/personal/posts :: posts"></div>
+            <div class="content" th:if="${nav == 'bookmark'}" th:include="fragments/personal/bookmark :: bookmark"></div>
+            <div class="content" th:if="${nav == 'followedposts'}" th:include="fragments/personal/followed_posts :: followedposts"></div>
+            <div class="content" th:if="${nav == 'followedusers'}" th:include="fragments/personal/followed_users :: followedusers"></div>
+            <div class="content" th:if="${nav == 'follower'}" th:include="fragments/personal/followers :: followers"></div>
+
+
         </div>
     </main>
 

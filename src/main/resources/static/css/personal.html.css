@@ -1,5 +1,10 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
 main {
     min-height: 900px;
+    margin-top: 50px;
 }
 
 .profile-header {

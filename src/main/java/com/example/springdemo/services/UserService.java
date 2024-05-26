@@ -240,7 +240,6 @@ public class UserService extends DatabaseService {
         return userInfo;
     }
 
-
     /**
      * Retrieves all users being followed by the user with the given UserID.
      *

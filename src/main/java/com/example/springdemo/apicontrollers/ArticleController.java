@@ -1,7 +1,10 @@
 package com.example.springdemo.apicontrollers;
 
 import com.example.springdemo.services.ArticleService;
+import com.example.springdemo.services.CloudsDiaryService;
 import com.example.springdemo.services.StatusBodyMessageService;
+import com.example.springdemo.services.CookieService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +16,7 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 public class ArticleController {
 
+    private CloudsDiaryService cloudsDiaryService = new CloudsDiaryService();
     private final int DEFAULT_QUANTITY = 6;
 
     private final int DEFAULT_PAGE = 1;
@@ -239,5 +243,40 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StatusBodyMessageService.statusNotFound());
     }
 
+//    @PostMapping("/api/article/new")
+//    public ResponseEntity newArticle(@RequestParam("title") String title,
+//                                     @RequestParam("content") String content,
+//                                     @RequestParam("tags") String tags,
+//                                     @RequestParam("images") List<MultipartFile> images,
+//                                     HttpServletRequest request) {
+//        ArticleService articleService = new ArticleService();
+//        Integer userId = Integer.parseInt(CookieService.getCookieValue(request, CookieService.cookieUserIdKey));
+//        boolean result = articleService.handelAddNewArticle(userId, title, content, tags.split(" "), images);
+//        if(result) {
+//            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
+//        }
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
+//    }
 
+    /**
+     * This function handle upload article content to database and it's image to cloud.
+     * @param param This param is a map contain 4 key: title, content, tags, images.
+     * @param request This is the client request info, we use it to get infomation of session and cookie.
+     * @return ResponEntity that is a message Object.
+     * */
+    @PostMapping("/api/article/newbase64")
+    public ResponseEntity newArticleBase64(@RequestBody Map<String, Object> param,
+                                     HttpServletRequest request) {
+        String title = (String) param.get("title");
+        String content = (String) param.get("content");
+        String tags = (String) param.get("tags");
+        List<String> images = (List<String>) param.get("images");
+        ArticleService articleService = new ArticleService();
+        Integer userId = Integer.parseInt(CookieService.getCookieValue(request, CookieService.cookieUserIdKey));
+        boolean result = articleService.handelAddNewArticleBase64(userId, title, content, tags.split(" "), images);
+        if(result) {
+            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
+    }
 }

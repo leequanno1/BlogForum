@@ -6,43 +6,6 @@ body {
     padding: 0;
     background-color: #fff; /* Màu trắng là màu chủ đạo */
   }
-
-  header {
-    color: #fff;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed; /* Neo header ở trên cùng */
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #007bff;
-    z-index: 1000; /* Đảm bảo header hiển thị trên cùng */
-  }
-
-  .header-shadow {
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  }
-  
-  .logo {
-    font-weight: bold;
-  }
-  
-  nav ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  nav ul li {
-    display: inline;
-    margin-right: 20px;
-  }
-  
-  nav ul li a {
-    color: #fff;
-    text-decoration: none;
-  }
   
   main {
     display: flex;

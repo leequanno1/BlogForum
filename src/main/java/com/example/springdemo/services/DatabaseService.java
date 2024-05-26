@@ -1,6 +1,6 @@
 package com.example.springdemo.services;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
-public class DatabaseService {
+abstract class DatabaseService {
     protected SQLServerDataSource getDataSource() {
         SQLServerDataSource ds = new SQLServerDataSource();
         ds.setUser("sa");

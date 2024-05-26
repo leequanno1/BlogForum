@@ -47,6 +47,7 @@ public class TagService extends DatabaseService{
 
     /**
      * This function return a list of all tag's name.
+     * @return List of tag name
      * */
     public List<Object> getAll() {
         List<Object> res = new ArrayList<>();
@@ -63,6 +64,7 @@ public class TagService extends DatabaseService{
     /**
      * This function return a list of all tag have name similar the provided name.
      * @param name The provided name for searching purpose.
+     * @return list of tag has similar name.
      * */
     public List<Object> getSimilar(String name) {
         List<Object> res = new ArrayList<>();
@@ -81,6 +83,7 @@ public class TagService extends DatabaseService{
      * This function add a new tag's name to database.
      * Returning result if it inserted ok or not.
      * @param name Tag's name
+     * @return true if susses, otherwise is false
      * */
     public boolean addNewTag(String name) {
         try (Connection connection = getDataSource().getConnection()) {
@@ -103,6 +106,7 @@ public class TagService extends DatabaseService{
      * Returning result if it updated ok or not.
      * @param currentName The current tag's name
      * @param newName The new tag's name
+     * @return true if susses, otherwise is false
      * */
     public boolean updateTag(String currentName , String newName) {
         try (Connection connection = getDataSource().getConnection()) {
