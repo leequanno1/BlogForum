@@ -1,6 +1,6 @@
 package com.example.springdemo.services;
 
-import com.example.springdemo.securities.PasswordEncoderUtil;
+import com.example.springdemo.security.EncoderUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -44,6 +44,7 @@ public class UserService extends DatabaseService {
         return false;
     }
 
+
     /**
      * Checks if the given email already exists in the database.
      *
@@ -68,6 +69,33 @@ public class UserService extends DatabaseService {
         return false;
     }
 
+
+    /**
+     * Retrieves Username via UserID.
+     *
+     * @param userId UserID of the user.
+     * @return Username of the User.
+     */
+    public String getUsernameByUserId(int userId) {
+        String username = "";
+        try (Connection connection = getDataSource().getConnection()) {
+            String query = "SELECT Username FROM [User] WHERE UserId = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, userId);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        username = resultSet.getString("Username");
+                    }
+                }
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return username;
+    }
+
+
     /**
      * Retrieves the UserID associated with a username from the database.
      *
@@ -79,13 +107,13 @@ public class UserService extends DatabaseService {
         int userID = -1;
 
         try (Connection connection = getDataSource().getConnection()) {
-            String query = "SELECT UserId, Password FROM [User] WHERE Username = ?";
+            String query = "SELECT UserId, Password FROM [User] WHERE Username = ? COLLATE Latin1_General_CS_AS";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, username);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         String hashedPassword = resultSet.getString("password");
-                        if (PasswordEncoderUtil.matches(password, hashedPassword)) {
+                        if (EncoderUtil.matches(password, hashedPassword)) {
                             userID = resultSet.getInt("UserId");
                         }
                     }
@@ -100,18 +128,71 @@ public class UserService extends DatabaseService {
 
 
     /**
+     * Get userID via email of the user.
+     *
+     * @param email Email of the user.
+     * @return UserID of the user.
+     */
+    public int getUserIdByEmail(String email) {
+        int userID = -1;
+
+        String query = "SELECT UserID FROM [User] WHERE Email = ?";
+        try (Connection connection = getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, email);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    userID = resultSet.getInt("UserID");
+                }
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return userID;
+    }
+
+
+    /**
+     * Retrieves email information associated with a UserID from the database.
+     *
+     * @param userId The UserID of the user.
+     * @return The email address of the user if UserID is valid, otherwise an empty string.
+     */
+    public String getEmailByUserId(int userId) {
+        String email = "";
+
+        try (Connection connection = getDataSource().getConnection()) {
+            String query = "SELECT Email FROM \"User\" WHERE UserID = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, userId);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        email = resultSet.getString("Email");
+
+                    }
+                }
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return email;
+    }
+
+
+    /**
      * Retrieves account information associated with a UserID from the database.
      *
      * @param userId The UserID of the user.
      * @return A map containing account information of the user if UserID is valid, otherwise an empty map.
      */
-    public Map<String, Object> getAccountInfoByUserId(int UserId) {
+    public Map<String, Object> getAccountInfoByUserId(int userId) {
         Map<String, Object> userInfo = new HashMap<>();
 
         try (Connection connection = getDataSource().getConnection()) {
             String query = "SELECT Username, DisplayName, AvatarURL FROM \"User\" WHERE UserID = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, UserId);
+                statement.setInt(1, userId);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         userInfo.put("Username", resultSet.getString("Username"));
@@ -160,47 +241,20 @@ public class UserService extends DatabaseService {
     }
 
 
-
-    /**
-     * Retrieves email information associated with a UserID from the database.
-     *
-     * @param userId The UserID of the user.
-     * @return The email address of the user if UserID is valid, otherwise an empty string.
-     */
-    public String getEmailByUserId(int UserId) {
-        String email = "";
-
-        try (Connection connection = getDataSource().getConnection()) {
-            String query = "SELECT Email FROM \"User\" WHERE UserID = ?";
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, UserId);
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    if (resultSet.next()) {
-                        email = resultSet.getString("Email");
-
-                    }
-                }
-            }
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        return email;
-    }
-
     /**
      * Retrieves all users being followed by the user with the given UserID.
      *
      * @param userId The UserID of the user.
      * @return A list of maps containing information of all users being followed by the user.
      */
-    public List<Map<String, Object>> getAllFollowUserByUserID(int UserID) {
+    public List<Map<String, Object>> getAllFollowUserByUserID(int userId) {
         List<Map<String, Object>> usersInfo = new ArrayList<>();
         try (Connection connection = getDataSource().getConnection()) {
             String query = "SELECT F.FollowerID as UserID, U.Username AS Username, U.AvatarURL AS AvatarURL, U.DisplayName AS DisplayName " +
                     "FROM [Follow] F INNER JOIN [User] U ON F.FollowerID = U.UserID " +
                     "WHERE F.FollowedUserID = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, UserID);
+                statement.setInt(1, userId);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
                         Map<String, Object> userInfo = new HashMap<>();
@@ -226,14 +280,14 @@ public class UserService extends DatabaseService {
      * @param userId The UserID of the user.
      * @return A list of maps containing information of all users following the user.
      */
-    public  List<Map<String, Object>> getAllFollowingUserByUserID(int UserID) {
+    public List<Map<String, Object>> getAllFollowingUserByUserID(int userId) {
         List<Map<String, Object>> usersInfo = new ArrayList<>();
         try (Connection connection = getDataSource().getConnection()) {
             String query = "SELECT F.FollowedUserID as UserID, U.Username AS Username, U.AvatarURL AS AvatarURL, U.DisplayName AS DisplayName " +
                     "FROM [Follow] F INNER JOIN [User] U ON F.FollowedUserID = U.UserID " +
                     "WHERE F.FollowerID = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, UserID);
+                statement.setInt(1, userId);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
                         Map<String, Object> userInfo = new HashMap<>();
@@ -251,6 +305,7 @@ public class UserService extends DatabaseService {
 
         return usersInfo;
     }
+
 
     /**
      * Creates a new account for a user with the given username, password, and email.
@@ -275,7 +330,7 @@ public class UserService extends DatabaseService {
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, username);
                 statement.setString(2, email);
-                statement.setString(3, PasswordEncoderUtil.encodePassword(password));
+                statement.setString(3, EncoderUtil.encode(password));
                 statement.setString(4, username);
 
                 int rowsAffected = statement.executeUpdate();
@@ -294,27 +349,27 @@ public class UserService extends DatabaseService {
     /**
      * Changes the password of the user with the given UserID.
      *
-     * @param userId     The UserID of the user.
+     * @param email The email of the user.
      * @param newPassword The new password to be set.
      * @return SUCCESS if password is changed successfully, FAILURE if password change fails.
      */
-    public int changePassword(int UserID, String newPassword) {
+    public int changePassword(String email, String newPassword) {
         try (Connection connection = getDataSource().getConnection()) {
-            String query = "UPDATE [User] Set [Password] = ? WHERE [UserID] = ?";
+            String query = "UPDATE [User] Set [Password] = ? WHERE [Email] = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setString(1, PasswordEncoderUtil.encodePassword(newPassword));
-                statement.setInt(2, UserID);
+                statement.setString(1, EncoderUtil.encode(newPassword));
+                statement.setString(2, email);
 
                 int rowsAffected = statement.executeUpdate();
                 if (rowsAffected > 0) {
-                    return SUCCESS;
+                    return 1;
                 }
             }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
 
-        return FAILURE;
+        return -1;
     }
 
 }
