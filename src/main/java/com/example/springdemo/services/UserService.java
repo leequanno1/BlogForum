@@ -371,4 +371,21 @@ public class UserService extends DatabaseService {
         return -1;
     }
 
+    public int changeInfo(int userId, String avatarURL, String displayName, String description) {
+        String SQL = "UPDATE [User] SET AvatarURL = ?, DisplayName = ?, [Description] = ? \n" +
+                "WHERE UserID = ?";
+        try (Connection connection = getDataSource().getConnection()){
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)){
+                preparedStatement.setString(1,avatarURL);
+                preparedStatement.setString(2,displayName);
+                preparedStatement.setString(3,description);
+                preparedStatement.setInt(4,userId);
+                int rowUpdated = preparedStatement.executeUpdate();
+                return rowUpdated > 0? 1 : -1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal Info</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/modify_personal_information.css">
+    <link rel="stylesheet" href="/css/header.css">
+</head>
+<body>
+    <div th:replace="fragments/logged_header :: logged_header"></div>
+    <main class="bg-light">
+        <div class="container-sm mb-3">
+            <input type="file" name="avtImageInput" id="avtImageInput" accept="image/*" style="display: none">
+            <form class="modify-form border border-secondary rounded bg-white" method="post" action="/personal/modify/changeinfo">
+                <h1 class="card-title">Personal Information</h1>
+                <p class="card-subtitle">Manage your personal information.</p>
+                <div class="avatar-with-name max-width justify-content-center">
+                    <label for="avtImageInput" class="profile-avatar height-130px modifiable-avatar">
+                        <img th:src="${userInfo.AvatarURL}" id="imagePreview" class="modifiable-avatar" alt="Avatar">
+                    </label>
+                    <label for="avtImageInput" class="image-holder">Change</label>
+                </div>
+                <input type="hidden" name="lastAvtURL" id="lastAvtURL" th:value="${userInfo.AvatarURL}">
+                <input type="hidden" name="base64Output" id="base64Output">
+
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Username</label>
+                    <span class="form-control" id="exampleInputPassword1" th:text="${userInfo.Username}"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="displayName" class="form-label">Display name</label>
+                    <input type="text" class="form-control" name="displayName" id="displayName" placeholder="Enter your display name here" th:value="${userInfo.DisplayName}">
+                    <span th:if="${displayNameMessage != null}" class="text-danger">Display name can't be blank.</span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="userDescription" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="userDescription" name="userDescription" placeholder="Enter your description here" value="">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Change</button>
+                <a href="/personal" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+        <div class="container-sm">
+            <form class="modify-form border border-secondary rounded bg-white">
+                <h1 class="card-title">Change password</h1>
+                <a href=/personal/modify/password class="btn btn-info">Change password</a>
+            </form>
+        </div>
+    </main>
+    <script src="/js/header.js"></script>
+    <script src="/js/changeInfo.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+main {
+    min-height: 900px;
+    padding-top: 90px;
+}
+
+.modify-form {
+    display: block;
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 30px;
+}
+
+.max-width {
+    width: 100% !important;
+    position: relative;
+}
+
+.image-holder {
+    position: absolute;
+    bottom: 0;
+    width: 130px;
+    text-align: center;
+    background: rgba(0, 0, 0, .6);
+    color: #ffffff;
+}
+
+.modifiable-avatar {
+    overflow: hidden;
+    width: 130px !important;
+    height: fit-content !important;
+}
+
+.height-130px {
+    height: 130px !important;
+}

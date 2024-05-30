@@ -1,19 +1,21 @@
 package com.example.springdemo.controllers;
 
-import com.example.springdemo.services.ArticleService;
-import com.example.springdemo.services.UserService;
-import com.example.springdemo.services.CookieService;
-import com.example.springdemo.services.UserInfoService;
+import com.example.springdemo.form.ChangePasswordForm;
+import com.example.springdemo.services.*;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/personal")
@@ -136,6 +138,62 @@ public class PersonalController {
         model.addAttribute("userList", userList);
         model.addAttribute("nav", "follower");
         return "personal";
+    }
+
+    @GetMapping("/modify")
+    public String modifyPersonalInformation(Model model, HttpServletRequest request) {
+        UserInfoService.addUserInfoToModel(model,request);
+
+        return "modify_personal_information";
+    }
+
+    @GetMapping("/modify/password")
+    public String changePassword(Model model, HttpServletRequest request) {
+        UserInfoService.addUserInfoToModel(model,request);
+        if(!model.containsAttribute("form")) {
+            model.addAttribute("form", new ChangePasswordForm());
+        }
+        return "change_password";
+    }
+
+    @PostMapping("/modify/changeinfo")
+    public String changeInfo(HttpServletRequest request, RedirectAttributes redirectAttributes,
+                             @RequestParam Map<String, Object> param) {
+        int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
+        String image =  (String) param.get("base64Output");
+        String avtURL =  (String) param.get("lastAvtURL");
+        String displayName =  (String) param.get("displayName");
+        String description =  (String) param.get("userDescription");
+        if(displayName.isEmpty()){
+            redirectAttributes.addFlashAttribute("displayNameMessage", true);
+            return "redirect:/personal/modify";
+        }
+        if(!image.isEmpty()){
+            CloudsDiaryService cloudsDiaryService = new CloudsDiaryService();
+            avtURL = cloudsDiaryService.uploadImageBase64(image, UUID.randomUUID().toString());
+        }
+        UserService userService = new UserService();
+        userService.changeInfo(userId,avtURL,displayName,description);
+        Map<String, Object> userInfo = userService.getAccountInfoByUserId(userId);
+        request.getSession().setAttribute("userInfo", userInfo);
+        return "redirect:/personal";
+    }
+
+    @PostMapping("/modify/passwordprocess")
+    public String changePasswordProcess(Model model, HttpServletRequest request, @Valid @ModelAttribute ChangePasswordForm form, RedirectAttributes redirectAttributes) {
+        if(form.getOldPassword().isEmpty()){
+            redirectAttributes.addFlashAttribute("oldPasswordRequired", true);
+        }
+        if(form.getNewPassword().isEmpty()) {
+            redirectAttributes.addFlashAttribute("newPasswordRequired", true);
+        }
+        if(form.getRepeatPassword().isEmpty()) {
+            redirectAttributes.addFlashAttribute("repeatPasswordRequired", true);
+        }
+        if(!form.getNewPassword().equals(form.getRepeatPassword())){
+            redirectAttributes.addFlashAttribute("newPasswordMatched", true);
+        }
+        return "redirect:/personal/modify/password";
     }
 
 }
