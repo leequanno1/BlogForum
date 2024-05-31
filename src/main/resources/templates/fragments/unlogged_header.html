@@ -9,14 +9,14 @@
     <link rel="stylesheet" th:href="@{css/header.css}">
     <header class="text-light bg-info py-3 header-shadow">
         <div class="container d-flex justify-content-between align-items-center">
-            <a href="#" class="text-light logo">Web Logo</a>
+            <a href="/" class="text-light logo">Web Logo</a>
             <nav>
                 <ul class="list-unstyled d-flex m-0 align-items-center">
                     <li class="mr-3">
-                        <form action="#" method="get">
+                        <form action="/article" method="get">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search..." aria-label="Recipient's username"
-                                       aria-describedby="button-addon2">
+                                <input type="text" name="title" class="form-control" placeholder="Search..." aria-label="Recipient's username"
+                                       th:value="${title}"   aria-describedby="button-addon2">
                                 <div class="input-group-append">
                                     <button class="btn btn-secondary text-light" type="submit" id="button-addon2"><i
                                             class="fa-solid fa-magnifying-glass"></i></button>

@@ -3,7 +3,10 @@ package com.example.springdemo.services;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,103 +17,253 @@ public class ArticleService extends DatabaseService{
     /**
      * SQL query to get Vote value in an article by using article id
      * */
-    private static final String GET_VOTE_VALUE =    "SELECT SUM(CASE WHEN VoteValue = 1 THEN 1 ELSE -1 END) AS TotalVotes\n" +
-                                                    "FROM Vote\n" +
-                                                    "WHERE ArticleID = ?\n" +
-                                                    "GROUP BY ArticleID";
+    private static final String GET_VOTE_VALUE                  =    "SELECT SUM(CASE WHEN VoteValue = 1 THEN 1 ELSE -1 END) AS TotalVotes\n" +
+                                                                     "FROM Vote\n" +
+                                                                     "WHERE ArticleID = ?\n" +
+                                                                     "GROUP BY ArticleID";
 
     /**
      * SQL query to get a list of tag in an article by using article id
      * */
-    private static final String GET_TAG_LIST =      "SELECT [Tag].* FROM [Tag]\n" +
-                                                    "INNER JOIN [ArticleTag] ON [Tag].[TagID] = [ArticleTag].[TagID]\n" +
-                                                    "WHERE [ArticleTag].[ArticleID] = ?";
+    private static final String GET_TAG_LIST                    =     "SELECT [Tag].* FROM [Tag]\n" +
+                                                                      "INNER JOIN [ArticleTag] ON [Tag].[TagID] = [ArticleTag].[TagID]\n" +
+                                                                      "WHERE [ArticleTag].[ArticleID] = ?";
 
     /**
      * Sub SQL query: the top part of GET_ALL query
      * */
-    private static final String GET_ALL_TOP =       "SELECT * FROM (\n" +
-                                                    "\tSELECT ar.[ArticleID], ar.[Title], ar.[CreatedAt], \n" +
-                                                    "\tus.[UserID], us.[AvatarURL], us.[Username], us.[DisplayName], \n" +
-                                                    "\tCOUNT(cmt.CommentID) as Comments,\n" +
-                                                    "\tROW_NUMBER() OVER (ORDER BY ar.[CreatedAt] DESC) AS RowNum\n" +
-                                                    "\tFROM [Article] as ar\n" +
-                                                    "\tINNER JOIN [User] as us ON ar.[UserID] = us.[UserID]\n" +
-                                                    "\tLEFT JOIN [Comment] as cmt ON ar.ArticleID = cmt.ArticleID\n";
+    private static final String GET_ALL_TOP                    =      "SELECT * FROM (\n" +
+                                                                     "\tSELECT ar.[ArticleID], ar.[Title], ar.[CreatedAt], \n" +
+                                                                     "\tus.[UserID], us.[AvatarURL], us.[Username], us.[DisplayName], \n" +
+                                                                     "\tCOUNT(cmt.CommentID) as Comments,\n" +
+                                                                     "\tROW_NUMBER() OVER (ORDER BY ar.[CreatedAt] DESC) AS RowNum\n" +
+                                                                     "\tFROM [Article] as ar\n" +
+                                                                     "\tINNER JOIN [User] as us ON ar.[UserID] = us.[UserID]\n" +
+                                                                     "\tLEFT JOIN [Comment] as cmt ON ar.ArticleID = cmt.ArticleID\n";
 
     /**
      * Sub SQL query: the bottom part of GET_ALL query
      * */
-    private static final String GET_ALL_BOTTOM =    "\tGROUP BY ar.[ArticleID], ar.[Title], ar.[CreatedAt], \n" +
-                                                    "\tus.[UserID], us.[AvatarURL], us.[Username], us.[DisplayName]\n" +
-                                                    ") AS RowConstrainedResult\n" +
-                                                    "WHERE RowNum BETWEEN ? AND ?";
+    private static final String GET_ALL_BOTTOM                  =    "\tGROUP BY ar.[ArticleID], ar.[Title], ar.[CreatedAt], \n" +
+                                                                     "\tus.[UserID], us.[AvatarURL], us.[Username], us.[DisplayName]\n" +
+                                                                     ") AS RowConstrainedResult\n" +
+                                                                     "WHERE RowNum BETWEEN ? AND ?";
 
     /**
      * SQL query to get a list of all article of a page
      * */
-    private static final String GET_ALL =           GET_ALL_TOP + GET_ALL_BOTTOM;
+    private static final String GET_ALL                         =    GET_ALL_TOP + GET_ALL_BOTTOM;
 
     /**
      * SQL query to get a list of all article of a page by using user id
      * */
-    private static final String GET_BY_USERID =     GET_ALL_TOP +
-                                                    "WHERE us.[UserID] = ?" +
-                                                    GET_ALL_BOTTOM;
+    private static final String GET_BY_USERID                   =    GET_ALL_TOP +
+                                                                     "WHERE us.[UserID] = ?" +
+                                                                     GET_ALL_BOTTOM;
 
     /**
      * SQL query to get a list of all article of a page by using article title
      * */
-    private static final String GET_BY_TITLE =      GET_ALL_TOP +
-                                                    "WHERE ar.[Title] LIKE ?" +
-                                                    GET_ALL_BOTTOM;
+    private static final String GET_BY_TITLE                     =  GET_ALL_TOP +
+                                                                    "WHERE ar.[Title] LIKE ?" +
+                                                                    GET_ALL_BOTTOM;
 
     /**
      * SQL query to get a list of all article of a page by using tag name
      * */
-    private static final String GET_BY_TAG_NAME =   GET_ALL_TOP +
-                                                    "\tINNER JOIN [ArticleTag] AS att ON att.ArticleID = ar.ArticleID\n" +
-                                                    "\tINNER JOIN [Tag] ON [Tag].TagID = att.TagID\n" +
-                                                    "\tWHERE [Tag].TagName = ?" +
-                                                    GET_ALL_BOTTOM;
+    private static final String GET_BY_TAG_NAME                 =  GET_ALL_TOP +
+                                                                   "\tINNER JOIN [ArticleTag] AS att ON att.ArticleID = ar.ArticleID\n" +
+                                                                   "\tINNER JOIN [Tag] ON [Tag].TagID = att.TagID\n" +
+                                                                   "\tWHERE [Tag].TagName = ?" +
+                                                                   GET_ALL_BOTTOM;
 
     /**
      * SQL query to get a list of all article of a page from a specific date
      * */
-    private static final String GET_FROM_DATE =     GET_ALL_TOP +
-                                                    "WHERE ar.[CreatedAt] >= ?" +
-                                                    GET_ALL_BOTTOM;
+    private static final String GET_FROM_DATE                   =  GET_ALL_TOP +
+                                                                   "WHERE ar.[CreatedAt] >= ?" +
+                                                                   GET_ALL_BOTTOM;
 
     /**
      * SQL query to get a list of all article of a page bookmarked by a user
      * */
-    private static final String GET_ALL_BOOKMARK =  GET_ALL_TOP +
-                                                    "\tINNER JOIN [Bookmark] as bm ON bm.ArticleID = ar.ArticleID\n" +
-                                                    "\tWHERE bm.UserID = ?" +
-                                                    GET_ALL_BOTTOM;
+    private static final String GET_ALL_BOOKMARK                =  GET_ALL_TOP +
+                                                                   "\tINNER JOIN [Bookmark] as bm ON bm.ArticleID = ar.ArticleID\n" +
+                                                                   "\tWHERE bm.UserID = ?" +
+                                                                   GET_ALL_BOTTOM;
 
     /**
      * SQL query to get article information by using article id
      * */
-    private static final String GET_BY_ARTICLE_ID = "SELECT ar.[ArticleID], ar.[Title], ar.[CreatedAt], ar.Content, \n" +
-                                                    "us.[UserID], us.[AvatarURL], us.[Username], us.[DisplayName], \n" +
-                                                    "(SELECT CASE \n" +
-                                                    "\tWHEN EXISTS (SELECT 1 FROM Vote WHERE VoteUserID = ? AND ArticleID = ?) \n" +
-                                                    "\tTHEN (SELECT VoteValue FROM Vote WHERE VoteUserID = ? AND ArticleID = ?)\n" +
-                                                    "\tELSE NULL END\n" +
-                                                    ") as VotedValue\n" +
-                                                    "FROM [Article] as ar\n" +
-                                                    "INNER JOIN [User] as us ON ar.[UserID] = us.[UserID]\n" +
-                                                    "WHERE ar.[ArticleID] = ?";
+    private static final String GET_BY_ARTICLE_ID               =  "SELECT ar.[ArticleID], ar.[Title], ar.[CreatedAt], ar.Content, \n" +
+                                                                   "us.[UserID], us.[AvatarURL], us.[Username], us.[DisplayName], \n" +
+                                                                   "(SELECT CASE \n" +
+                                                                   "\tWHEN EXISTS (SELECT 1 FROM Vote WHERE VoteUserID = ? AND ArticleID = ?) \n" +
+                                                                   "\tTHEN (SELECT VoteValue FROM Vote WHERE VoteUserID = ? AND ArticleID = ?)\n" +
+                                                                   "\tELSE NULL END\n" +
+                                                                   ") as VotedValue\n" +
+                                                                   "FROM [Article] as ar\n" +
+                                                                   "INNER JOIN [User] as us ON ar.[UserID] = us.[UserID]\n" +
+                                                                   "WHERE ar.[ArticleID] = ?";
 
-    private static final String INSERT_ARTICLE =    "INSERT INTO [Article]([UserID], [Title], [Content] ,[CreatedAt]) VALUES\n" +
-                                                    "(?,?,?, SYSDATETIME())";
+    /**
+     * SQL query to insert a new article into the Article table
+     */
+    private static final String INSERT_ARTICLE                  =  "INSERT INTO [Article]([UserID], [Title], [Content] ,[CreatedAt]) VALUES\n" +
+                                                                   "(?,?,?, SYSDATETIME())";
+    /**
+     * SQL query to insert a new article-tag relationship into the ArticleTag table
+     */
+    private static final String INSERT_ARTICLETAG               =  "INSERT INTO [ArticleTag]([ArticleID],[TagID]) VALUES (?,?)";
 
-    private static final String INSERT_ARTICLETAG = "INSERT INTO [ArticleTag]([ArticleID],[TagID]) VALUES (?,?)";
+    /**
+     * SQL query to get the latest article ID for a specific user
+     */
+    private static final String GET_LASTEST                     =  "SELECT TOP(1) ArticleID FROM [Article]\n" +
+                                                                   "WHERE UserID = ?" +
+                                                                   "ORDER BY CreatedAt DESC";
+    /**
+     * SQL query to get the total number of articles
+     */
+    private static final String GET_TOTAL_ARTICLE               =  "SELECT COUNT(*) AS totalArticle FROM [Article]";
 
-    private static final String GET_LASTEST =       "SELECT TOP(1) ArticleID FROM [Article]\n" +
-                                                    "WHERE UserID = ?" +
-                                                    "ORDER BY CreatedAt DESC";
+    /**
+     * SQL query to get the total number of articles for a specific tag
+     */
+    private static final String GET_TOTAL_ARTICLE_BY_TAG        =  "SELECT COUNT(DISTINCT a.ArticleID) AS totalArticle " +
+                                                                   "FROM Article a " +
+                                                                   "JOIN ArticleTag at ON a.ArticleID = at.ArticleID " +
+                                                                   "JOIN Tag t ON at.TagID = t.TagID " +
+                                                                   "WHERE t.TagName = ?";
+
+    /**
+     * SQL query to get the total number of articles from a specific date onwards
+     */
+    private static final String GET_TOTAL_ARTICLE_BY_FROM_DATE  =  "SELECT COUNT(a.ArticleID) AS totalArticle " +
+                                                                   "FROM Article a " +
+                                                                   "WHERE a.[CreatedAt] >= ?";
+
+    /**
+     * SQL query to get the top 5 most popular tags
+     */
+    private static final String GET_POPULAR_TAGS                =  "SELECT TOP 5 t.TagName, COUNT(at.TagID) AS tagCount " +
+                                                                   "FROM Tag t " +
+                                                                   "JOIN ArticleTag at ON t.TagID = at.TagID " +
+                                                                   "GROUP BY t.TagName " +
+                                                                   "ORDER BY tagCount DESC";
+
+
+    /**
+     * SQL query to get the total number of articles with a specific title
+     */
+    private static final String GET_TOTAL_ARTICLE_BY_TITLE      =  "SELECT COUNT(a.ArticleID) AS totalArticle " +
+                                                                   "FROM Article a " +
+                                                                   "WHERE a.[Title] LIKE ?";
+
+    /**
+     * SQL query to get the remaining tags that are not in the top 5 most popular tags and appear in articles
+     */
+    private static final String GET_REMAINING_TAGS              =   "SELECT t.TagName " +
+                                                                    "FROM Tag t " +
+                                                                    "JOIN ArticleTag at ON t.TagID = at.TagID " +
+                                                                    "GROUP BY t.TagName " +
+                                                                    "HAVING COUNT(at.TagID) > 0 AND t.TagName NOT IN ( " +
+                                                                    "    SELECT TOP 5 t.TagName " +
+                                                                    "    FROM Tag t " +
+                                                                    "    JOIN ArticleTag at ON t.TagID = at.TagID " +
+                                                                    "    GROUP BY t.TagName " +
+                                                                    "    ORDER BY COUNT(at.TagID) DESC " +
+                                                                    ")";
+
+    /**
+     * Sub service to get the total number of articles.
+     * @return the total number of articles
+     */
+    public int getTotalArticle() {
+        int totalArticle = 0;
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(GET_TOTAL_ARTICLE)) {
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    totalArticle = resultSet.getInt("totalArticle");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalArticle;
+    }
+
+
+    /**
+     * Sub service to get the total number article by tag.
+     * @return The total number acticle by tag.
+     */
+    public int getTotalArticleByTag(String tagName) {
+        int totalArticle = 0;
+
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(GET_TOTAL_ARTICLE_BY_TAG)) {
+                preparedStatement.setString(1, tagName);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    totalArticle = resultSet.getInt("totalArticle");
+                }
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalArticle;
+    }
+
+
+    /**
+     * Sub service to get the total number article by from date.
+     * @return The total number acticle by from date.
+     */
+    public int getTotalArticleByFromDate(String date) {
+        int totalArticle = 0;
+
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(GET_TOTAL_ARTICLE_BY_FROM_DATE)) {
+                preparedStatement.setString(1, date);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    totalArticle = resultSet.getInt("totalArticle");
+                }
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalArticle;
+    }
+
+
+    /**
+     * Sub service to get the total number article by title.
+     * @return The total number acticle by title.
+     */
+    public int getTotalArticleByTitle(String title) {
+        int totalArticle = 0;
+        String searchTitle = "%" + title + "%";
+
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(GET_TOTAL_ARTICLE_BY_TITLE)) {
+                preparedStatement.setString(1, searchTitle);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    totalArticle = resultSet.getInt("totalArticle");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalArticle;
+    }
+
+
     /**
      * Sub service to get vote value of an article by using article ID
      * @param articleID the article's id
@@ -130,6 +283,7 @@ public class ArticleService extends DatabaseService{
         }
         return res;
     }
+
 
     /**
      * Sub service to get tag list of an article by using article ID
@@ -154,6 +308,79 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+
+    /**
+     * Sub service to get popular tags.
+     * @return The popular tags.
+     */
+    public List<String> getPopularTags() {
+        List<String> popularTags = new ArrayList<>();
+        try (Connection connection = getDataSource().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_POPULAR_TAGS);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String tagName = resultSet.getString("TagName");
+                popularTags.add(tagName);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return popularTags;
+    }
+
+
+    /**
+     * Sub service to get remaining tags excluding the top 5 popular tags.
+     * @return The remaining tags.
+     */
+    public List<String> getRemainingTags() {
+        List<String> remainingTags = new ArrayList<>();
+        try (Connection connection = getDataSource().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_REMAINING_TAGS);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String tagName = resultSet.getString("TagName");
+                remainingTags.add(tagName);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return remainingTags;
+    }
+
+
+    /**
+     * Formats an input date string from one format to another.
+     *
+     * @param inputDate The input date string in the format "yyyy-MM-dd HH:mm:ss.S".
+     * @return A formatted date string in the format "dd/MM/yyyy HH:mm",
+     *         or null if the input date string cannot be parsed.
+     */
+    public static String formatDateString(String inputDate) {
+        // Input format pattern
+        String inputFormat = "yyyy-MM-dd HH:mm:ss.S";
+        // Output format pattern
+        String outputFormat = "dd/MM/yyyy HH:mm";
+
+        // Create SimpleDateFormat objects for input and output formats
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat(inputFormat);
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat(outputFormat);
+
+        try {
+            // Parse the input string into a Date object
+            Date date = inputDateFormat.parse(inputDate);
+            // Format the Date object into the desired output format
+            return outputDateFormat.format(date);
+        } catch (ParseException e) {
+            // Print stack trace if parsing fails
+            e.printStackTrace();
+            return null; // or you can throw an exception or handle it differently
+        }
+    }
+
+
     /**
      * Sub service to handle get article list
      * @param res the result article list.
@@ -161,24 +388,31 @@ public class ArticleService extends DatabaseService{
      * */
     private void handleGetArticleList(List<Object> res, PreparedStatement preparedStatement) throws SQLException {
         ResultSet resultSet = preparedStatement.executeQuery();
+
         while (resultSet.next()) {
             Map<String,Object> row = new HashMap<>();
             Map<String,Object> user = new HashMap<>();
             List<Object> tags = getTagList(resultSet.getInt("ArticleID"));
+
             row.put("articleID", resultSet.getInt("ArticleID"));
             row.put("title", resultSet.getString("Title"));
             row.put("createdAt", resultSet.getString("createdAt"));
+            row.put("dateFormated", formatDateString(resultSet.getString("createdAt")));
             row.put("comments", resultSet.getString("comments"));
             row.put("votes", getVoteValue(resultSet.getInt("ArticleID")));
+
             user.put("userID", resultSet.getInt("userID"));
             user.put("avatarURL", resultSet.getString("avatarURL"));
             user.put("username", resultSet.getString("username"));
             user.put("displayName", resultSet.getString("displayName"));
+
             row.put("user", user);
             row.put("tags", tags);
+
             res.add(row);
         }
     }
+
 
     /**
      * Service to get the article list of a page
@@ -187,6 +421,7 @@ public class ArticleService extends DatabaseService{
      * */
     public List<Object> getAll(int quantity, int page) {
         List<Object> res = new ArrayList<>();
+
         try(Connection connection = getDataSource().getConnection()) {
             try(PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL)) {
                 preparedStatement.setInt(1, quantity*(page-1) + 1);
@@ -198,6 +433,7 @@ public class ArticleService extends DatabaseService{
         }
         return res;
     }
+
 
     /**
      * Service to get the article list of a page by using user id
@@ -220,6 +456,7 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+
     /**
      * Service to get the article list of a page by using article's title.
      * @param title the article's title.
@@ -240,6 +477,7 @@ public class ArticleService extends DatabaseService{
         }
         return res;
     }
+
 
     /**
      * Service to get the article list of a page by using tag name.
@@ -262,6 +500,7 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+
     /**
      * Service to get the article list of a page from specific date.
      * @param fromDate the specific date.
@@ -272,7 +511,7 @@ public class ArticleService extends DatabaseService{
         List<Object> res = new ArrayList<>();
         try(Connection connection = getDataSource().getConnection()) {
             try(PreparedStatement preparedStatement = connection.prepareStatement(GET_FROM_DATE)) {
-                preparedStatement.setDate(1, Date.valueOf(fromDate));
+                preparedStatement.setTimestamp(1,  Timestamp.valueOf(fromDate));
                 preparedStatement.setInt(2, quantity*(page-1) + 1);
                 preparedStatement.setInt(3, quantity*(page-1) + quantity);
                 handleGetArticleList(res, preparedStatement);
@@ -282,6 +521,7 @@ public class ArticleService extends DatabaseService{
         }
         return res;
     }
+
 
     /**
      * Service to get the article list of a page by using bookmark
@@ -303,6 +543,7 @@ public class ArticleService extends DatabaseService{
         }
         return res;
     }
+
 
     /**
      * Service to get an article information by using article id
@@ -342,6 +583,7 @@ public class ArticleService extends DatabaseService{
         return res;
     }
 
+
     /**
      * This fuction handle add an article content with article image is a list of File.
      * Text article info will be saved in database and the image will be save in cloud.
@@ -375,6 +617,7 @@ public class ArticleService extends DatabaseService{
                 if (resultSet.next()) {
                     articleId = resultSet.getInt("ArticleID");
                 }
+
             }
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ARTICLETAG)) {
                 preparedStatement.setInt(1, articleId);
@@ -389,6 +632,7 @@ public class ArticleService extends DatabaseService{
         }
         return true;
     }
+
 
     /**
      * This fuction handle add an article content with article image is a string image data encode by base64.
@@ -438,6 +682,7 @@ public class ArticleService extends DatabaseService{
         return true;
     }
 
+
     /**
      * This function replace all "[?]" string into the value in the replacement list.
      * @param original the original string need to replace
@@ -452,6 +697,7 @@ public class ArticleService extends DatabaseService{
         }
         return original;
     }
+
 
     /**
      * This function handle insert article into database.
@@ -496,6 +742,7 @@ public class ArticleService extends DatabaseService{
         return articleId;
     }
 
+
     /**
      * This function handle insert article's tags into database.
      * @param articleId integer article's id.
@@ -516,4 +763,5 @@ public class ArticleService extends DatabaseService{
         }
         return true;
     }
+
 }

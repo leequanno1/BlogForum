@@ -17,9 +17,9 @@ import java.util.Random;
 @Service
 public class EmailService {
 
-    private final String sendGridApiKey = System.getenv("SENDGRID_API_KEY");
+//    private final String sendGridApiKey = System.getenv("SENDGRID_API_KEY");
 
-    private final SendGrid sendGrid = new SendGrid(sendGridApiKey);
+    private final SendGrid sendGrid = new SendGrid("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");
 
     /**
      * tokenServices is used to handle information of the token.

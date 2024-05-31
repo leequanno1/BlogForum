@@ -1,227 +1,164 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Viblo Clone</title>
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- Custom CSS -->
-  <link rel="stylesheet" th:href="@{/css/styles.css}">
-  <link rel="stylesheet" th:href="@{/css/header.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viblo Clone</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
 </head>
-
 <body>
-  <!-- Header -->
-  <div th:if="${userInfo == null}" >
-    <div th:replace="fragments/unlogged_header :: unlogged_header"></div>
-  </div>
-  <div th:if="${userInfo != null}">
-    <div  th:replace="fragments/logged_header :: logged_header"></div>
-  </div>
-
-  <!-- Main Content -->
-  <main class="py-5">
-    <div class="container mt-4">
-      <div class="row">
-      </div>
-      <div class="row">
-        <!-- Posts -->
-        <div class="col-lg-8">
-          <div class="posts">
-            <h2 class="mt-3 mb-0 post">Bài viết</h2>
-          </div>
-          <div class="posts">
-            <!-- Sample post -->
-            <div class="post">
-              <a href="#">
-                <h2>Title of the post</h2>
-              </a>
-              <div class="author-info d-flex align-items-center">
-                <a href="#">
-                  <img
-                    src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
-                    alt="Avatar" class="avatar mr-2">
-                </a>
-                <a href="#">
-                  <span class="author">Author Name</span>
-                </a>
-                <a href="#" class="ml-auto">
-                  <span class="date">April 30, 2024</span>
-                </a>
-              </div>
-              <div class="tags mt-2">
-                <a href="#">
-                  <span class="tag mr-1">Tag 1</span>
-                </a>
-                <a href="#">
-                  <span class="tag mr-1">Tag 2</span>
-                </a>
-                <!-- Add more tags here -->
-              </div>
-              <div class="metrics mt-2">
-                <span class="comments mr-3">10 Comments</span>
-                <span class="votes">100 Votes</span>
-              </div>
-            </div>
-            <div class="post">
-              <a href="#">
-                <h2>Title of the post</h2>
-              </a>
-              <div class="author-info d-flex align-items-center">
-                <a href="#">
-                  <img
-                          src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
-                          alt="Avatar" class="avatar mr-2">
-                </a>
-                <a href="#">
-                  <span class="author">Author Name</span>
-                </a>
-                <a href="#" class="ml-auto">
-                  <span class="date">April 30, 2024</span>
-                </a>
-              </div>
-              <div class="tags mt-2">
-                <a href="#">
-                  <span class="tag mr-1">Tag 1</span>
-                </a>
-                <a href="#">
-                  <span class="tag mr-1">Tag 2</span>
-                </a>
-                <!-- Add more tags here -->
-              </div>
-              <div class="metrics mt-2">
-                <span class="comments mr-3">10 Comments</span>
-                <span class="votes">100 Votes</span>
-              </div>
-            </div>
-            <div class="post">
-              <a href="#">
-                <h2>Title of the post</h2>
-              </a>
-              <div class="author-info d-flex align-items-center">
-                <a href="#">
-                  <img
-                          src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
-                          alt="Avatar" class="avatar mr-2">
-                </a>
-                <a href="#">
-                  <span class="author">Author Name</span>
-                </a>
-                <a href="#" class="ml-auto">
-                  <span class="date">April 30, 2024</span>
-                </a>
-              </div>
-              <div class="tags mt-2">
-                <a href="#">
-                  <span class="tag mr-1">Tag 1</span>
-                </a>
-                <a href="#">
-                  <span class="tag mr-1">Tag 2</span>
-                </a>
-                <!-- Add more tags here -->
-              </div>
-              <div class="metrics mt-2">
-                <span class="comments mr-3">10 Comments</span>
-                <span class="votes">100 Votes</span>
-              </div>
-            </div>
-            <div class="post">
-              <a href="#">
-                <h2>Title of the post</h2>
-              </a>
-              <div class="author-info d-flex align-items-center">
-                <a href="#">
-                  <img
-                          src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
-                          alt="Avatar" class="avatar mr-2">
-                </a>
-                <a href="#">
-                  <span class="author">Author Name</span>
-                </a>
-                <a href="#" class="ml-auto">
-                  <span class="date">April 30, 2024</span>
-                </a>
-              </div>
-              <div class="tags mt-2">
-                <a href="#">
-                  <span class="tag mr-1">Tag 1</span>
-                </a>
-                <a href="#">
-                  <span class="tag mr-1">Tag 2</span>
-                </a>
-                <!-- Add more tags here -->
-              </div>
-              <div class="metrics mt-2">
-                <span class="comments mr-3">10 Comments</span>
-                <span class="votes">100 Votes</span>
-              </div>
-            </div>
-            <div class="post">
-              <a href="#">
-                <h2>Title of the post</h2>
-              </a>
-              <div class="author-info d-flex align-items-center">
-                <a href="#">
-                  <img
-                          src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=UxYMPcsDuNwQ7kNvgE15ZGC&_nc_ht=scontent.fhan14-2.fna&oh=00_AfDJ8U7yEbYWcKREtkMsqhyd3S_jEhEMErlM7wWZUQobrw&oe=663CED43"
-                          alt="Avatar" class="avatar mr-2">
-                </a>
-                <a href="#">
-                  <span class="author">Author Name</span>
-                </a>
-                <a href="#" class="ml-auto">
-                  <span class="date">April 30, 2024</span>
-                </a>
-              </div>
-              <div class="tags mt-2">
-                <a href="#">
-                  <span class="tag mr-1">Tag 1</span>
-                </a>
-                <a href="#">
-                  <span class="tag mr-1">Tag 2</span>
-                </a>
-                <!-- Add more tags here -->
-              </div>
-              <div class="metrics mt-2">
-                <span class="comments mr-3">10 Comments</span>
-                <span class="votes">100 Votes</span>
-              </div>
-            </div>
-            <!-- Add more posts here -->
-          </div>
-        </div>
-        <!-- Popular Tags -->
-        <div class="col-lg-4">
-          <div class="popular-tags bg-light p-3 card">
-            <h3>Các tag phổ biến</h3>
-            <ul class="list-unstyled">
-              <li><a href="#" class="text-dark">Tag 1</a></li>
-              <li><a href="#" class="text-dark">Tag 2</a></li>
-              <!-- Add more tags here -->
-            </ul>
-          </div>
-        </div>
-      </div>
+    <!-- Header -->
+    <div th:if="${userInfo == null}" >
+        <div th:replace="fragments/unlogged_header :: unlogged_header"></div>
     </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-dark text-light py-3">
-    <div class="container">
-      <p class="m-0">&copy; 2024 Viblo Clone</p>
+    <div th:if="${userInfo != null}">
+        <div  th:replace="fragments/logged_header :: logged_header"></div>
     </div>
-  </footer>
 
-  <!-- Bootstrap JS and custom JS -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="/js/header.js"></script>
+    <!-- Main Content -->
+    <main class="py-5">
+        <div class="container mt-4">
+            <div class="row">
+            </div>
+            <div class="row">
+                <!-- Posts -->
+                <div class="col-lg-8">
+                    <div class="posts">
+                        <h2 class="mt-3 mb-0 post">Bài viết</h2>
+                    </div>
+                    <div class="posts">
+                        <!-- Sample post -->
+                        <div th:each="article: ${articles}">
+
+                            <div class="post">
+                                <a href="#">
+                                    <h2 th:text="${article.title}"></h2>
+                                </a>
+                                <div class="author-info d-flex align-items-center">
+                                    <a href="#">
+                                        <img th:if="${article.user.avatarURL != null && #strings.startsWith(article.user.avatarURL, 'https://scontent')}"
+                                             th:src="${article.user.avatarURL}"
+                                             alt="Avatar" class="avatar mr-2">
+                                        <img th:unless="${article.user.avatarURL != null && #strings.startsWith(article.user.avatarURL, 'https://scontent')}"
+                                             src="https://scontent.fdad3-1.fna.fbcdn.net/v/t39.30808-6/397868474_192548737234753_6902534524750595148_n.jpg?_nc_cat=111&amp;ccb=1-7&amp;_nc_sid=5f2048&amp;_nc_ohc=j4uuYaOMPGIQ7kNvgEreaAz&amp;_nc_ht=scontent.fdad3-1.fna&amp;oh=00_AYBbQl8A3bqseGJ8tVfUdBEKbfdfhw-tJCcSHgIXu7ldEQ&amp;oe=665BDEDC"
+                                             alt="Default Avatar" class="avatar mr-2">
+                                    </a>
+                                    <a href="#">
+                                        <span th:text="${article.user.displayName}" class="author"></span>
+                                    </a>
+                                    <a th:href="@{/article(date=${article.createdAt})}" class="ml-auto">
+                                        <span th:text="${article.dateFormated}" class="date"></span>
+                                    </a>
+                                </div>
+
+                                <div class="tags mt-2">
+                                    <div th:each="tag : ${article.tags}">
+                                        <a th:href="@{/article(tagName=${tag.tagName})}">
+                                            <span th:text="${tag.tagName}" class="tag mr-1"></span>
+                                        </a>
+                                    </div>
+                                    <!-- Add more tags here -->
+                                </div>
+
+                                <div class="metrics mt-2">
+                                    <span th:text="'Comments:' + ${article.comments}" class="comments mr-3"></span>
+                                    <span th:text="'Votes: ' + ${article.votes}" class="votes"></span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Add more posts here -->
+                    </div>
+                </div>
+
+                <!-- Popular Tags -->
+                <div class="col-lg-4">
+                    <div class="popular-tags bg-light p-3 card">
+                        <h3>Các tag phổ biến</h3>
+                        <ul class="list-unstyled">
+                            <li th:each="tag : ${popularTags}">
+                                <a th:href="@{/article(tagName=${tag})}" class="text-dark" th:text="${tag}">Tag</a>
+                            </li>
+                        </ul>
+
+                        <!-- View more tags -->
+                        <a id="viewMoreTags" href="javascript:void(0);" onclick="showMoreTags()">View more tags</a>
+                        <ul id="remainingTags" class="list-unstyled" style="display: none;">
+                            <li th:each="tag : ${remainingTags}">
+                                <a th:href="@{/article(tagName=${tag})}" class="text-dark" th:text="${tag}">Tag</a>
+                            </li>
+                        </ul>
+                        <a id="hideMoreTags" href="javascript:void(0);" onclick="hideMoreTags()" style="display: none;">Hide more tags</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Pagination -->
+            <div class="row" th:if="${totalPages > 1}">
+                <div class="col-12">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                <a class="page-link" th:href="@{/article(page=${currentPage - 1}, tagName=${param.tagName}, date=${param.date}, title=${param.title})}" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item" th:if="${currentPage > 1}">
+                                <a class="page-link" th:href="@{/article(page=1, tagName=${param.tagName}, date=${param.date}, title=${param.title})}">First</a>
+                            </li>
+                            <li class="page-item" th:each="pageNum : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 > totalPages ? totalPages : currentPage + 2)}"
+                                th:classappend="${pageNum == currentPage} ? 'active'">
+                                <a class="page-link" th:href="@{/article(page=${pageNum}, tagName=${param.tagName}, date=${param.date}, title=${param.title})}" th:text="${pageNum}"></a>
+                            </li>
+                            <li class="page-item" th:if="${currentPage < totalPages}">
+                                <a class="page-link" th:href="@{/article(page=${totalPages}, tagName=${param.tagName}, date=${param.date}, title=${param.title})}">Last</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                <a class="page-link" th:href="@{/article(page=${currentPage + 1}, tagName=${param.tagName}, date=${param.date}, title=${param.title})}">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-3">
+        <div class="container">
+            <p class="m-0">&copy; 2024 Viblo Clone</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and custom JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/js/header.js"></script>
+    <script>
+        function showMoreTags() {
+            document.getElementById("remainingTags").style.display = "block";
+            document.getElementById("viewMoreTags").style.display = "none";
+            document.getElementById("hideMoreTags").style.display = "block";
+        }
+
+        function hideMoreTags() {
+            document.getElementById("remainingTags").style.display = "none";
+            document.getElementById("viewMoreTags").style.display = "block";
+            document.getElementById("hideMoreTags").style.display = "none";
+        }
+    </script>
+
+
 </body>
-
 </html>
