@@ -371,6 +371,32 @@ public class UserService extends DatabaseService {
         return -1;
     }
 
+    /**
+     * Changes the password of the user with the given UserID.
+     *
+     * @param username The username of the user.
+     * @param newPassword The new password to be set.
+     * @return SUCCESS if password is changed successfully, FAILURE if password change fails.
+     */
+    public int changePasswordByUsername(String username, String newPassword) {
+        try (Connection connection = getDataSource().getConnection()) {
+            String query = "UPDATE [User] Set [Password] = ? WHERE [Username] = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, EncoderUtil.encode(newPassword));
+                statement.setString(2, username);
+
+                int rowsAffected = statement.executeUpdate();
+                if (rowsAffected > 0) {
+                    return 1;
+                }
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return -1;
+    }
+
     public int changeInfo(int userId, String avatarURL, String displayName, String description) {
         String SQL = "UPDATE [User] SET AvatarURL = ?, DisplayName = ?, [Description] = ? \n" +
                 "WHERE UserID = ?";

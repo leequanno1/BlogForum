@@ -187,11 +187,20 @@ public class PersonalController {
         if(form.getNewPassword().isEmpty()) {
             redirectAttributes.addFlashAttribute("newPasswordRequired", true);
         }
+        UserService userService = new UserService();
+        int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
+        String username = userService.getUsernameByUserId(userId);
         if(form.getRepeatPassword().isEmpty()) {
             redirectAttributes.addFlashAttribute("repeatPasswordRequired", true);
-        }
-        if(!form.getNewPassword().equals(form.getRepeatPassword())){
+        } else if(!form.getNewPassword().equals(form.getRepeatPassword())){
             redirectAttributes.addFlashAttribute("newPasswordMatched", true);
+        } else if(userService.getUserIdByUsPw(username, form.getOldPassword()) == -1) {
+            // hiện thông báo
+            redirectAttributes.addFlashAttribute("oldPasswordMatched", true);
+        } else {
+            userService.changePasswordByUsername(username,form.getNewPassword());
+            return "redirect:/personal/modify";
+            // redirect
         }
         return "redirect:/personal/modify/password";
     }
