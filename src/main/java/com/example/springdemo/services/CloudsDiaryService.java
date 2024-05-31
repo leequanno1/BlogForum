@@ -17,7 +17,7 @@ public class CloudsDiaryService {
 
     /**
      * This function handle upload 1 image into cloud.
-     * @param image the image file
+     * @param image the image MultipartFile
      * @param savedName String name that you want the image can be saved.
      * @return the image URL to access cloud.
      * */
@@ -37,6 +37,12 @@ public class CloudsDiaryService {
         return endURL;
     }
 
+    /**
+     * This function handle upload 1 image into cloud.
+     * @param image the image File
+     * @param savedName String name that you want the image can be saved.
+     * @return the image URL to access cloud.
+     * */
     public String uploadImage(File image, String savedName) {
         String endURL = "";
         Map params = ObjectUtils.asMap(
