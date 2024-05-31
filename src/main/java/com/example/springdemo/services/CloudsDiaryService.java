@@ -37,6 +37,22 @@ public class CloudsDiaryService {
         return endURL;
     }
 
+    public String uploadImage(File image, String savedName) {
+        String endURL = "";
+        Map params = ObjectUtils.asMap(
+                "folder", "SpringForum/Images",
+                "resource_type", "image",
+                "public_id", savedName
+        );
+        try {
+            Map result = SingletonCloudinary.getInstance().uploader().upload(image, params);
+        } catch (IOException exception) {
+            System.out.println(exception.getMessage());
+        }
+        endURL = "https://res.cloudinary.com/ddczpe6gq/image/upload/SpringForum/Images/"+savedName+".png";
+        return endURL;
+    }
+
     /**
      * This function handle upload multiple image into cloud.
      * @param images list MultipartFile of images.

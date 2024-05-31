@@ -3,7 +3,7 @@ body {
 }
 
 main {
-    min-height: 900px;
+    min-height: 100vh;
     margin-top: 50px;
 }
 

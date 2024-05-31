@@ -131,6 +131,9 @@ public class UserController {
         }
 
         Map<String, Object> userInfo = userService.getAccountInfoByUserId(userID);
+        if(userInfo.get("AvatarURL") == null || ((String)userInfo.get("AvatarURL")).isEmpty()) {
+            userInfo.replace("AvatarURL", "https://res.cloudinary.com/ddczpe6gq/image/upload/v1716959781/modfziyc6jesknmgizok.jpg");
+        }
         HttpSession session = request.getSession();
         session.setAttribute("userInfo", userInfo);
 
