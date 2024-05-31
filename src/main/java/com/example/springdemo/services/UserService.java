@@ -397,6 +397,16 @@ public class UserService extends DatabaseService {
         return -1;
     }
 
+    /**
+     * Change user information by using userid
+     *
+     * @param userId the Integer user id
+     * @param avatarURL the String avartar url
+     * @param displayName the String display name
+     * @param description the String description
+     *
+     * @return int 1 if SUCCESS or else if FAILURE
+     * */
     public int changeInfo(int userId, String avatarURL, String displayName, String description) {
         String SQL = "UPDATE [User] SET AvatarURL = ?, DisplayName = ?, [Description] = ? \n" +
                 "WHERE UserID = ?";
@@ -406,6 +416,30 @@ public class UserService extends DatabaseService {
                 preparedStatement.setString(2,displayName);
                 preparedStatement.setString(3,description);
                 preparedStatement.setInt(4,userId);
+                int rowUpdated = preparedStatement.executeUpdate();
+                return rowUpdated > 0? 1 : -1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+
+
+    /**
+     * Unfollow user by using userid and followed id
+     *
+     * @param userId int user ID
+     * @param followedId int followed user ID
+     *
+     * @return int 1 if SUCCESS or else if FAILURE
+     * */
+    public int unfollowUser(int userId, int followedId) {
+        String SQL = "DELETE FROM [Follow] WHERE [FollowerID] = ? AND [FollowedUserID] = ?";
+        try (Connection connection = getDataSource().getConnection()){
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)){
+                preparedStatement.setInt(1,userId);
+                preparedStatement.setInt(2,followedId);
                 int rowUpdated = preparedStatement.executeUpdate();
                 return rowUpdated > 0? 1 : -1;
             }

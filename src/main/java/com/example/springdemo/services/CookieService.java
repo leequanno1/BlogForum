@@ -6,6 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 public class CookieService {
 
     public static final String cookieUserIdKey = "SessionUserID";
+
+    /**
+     * This function handle get the String value of a cookie form the request.
+     * @param request the HttpServletRequest object - the request instance
+     * @param cookieName the cookie's key name.
+     * @return cookie's value.
+     * */
     public static String getCookieValue(HttpServletRequest request, String cookieName) {
         String value = null;
         Cookie[] cookies = request.getCookies();

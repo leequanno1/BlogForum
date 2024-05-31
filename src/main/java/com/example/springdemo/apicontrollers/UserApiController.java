@@ -1,6 +1,7 @@
 package com.example.springdemo.apicontrollers;
 
 import com.example.springdemo.services.EmailService;
+import com.example.springdemo.services.StatusBodyMessageService;
 import com.example.springdemo.services.TokenService;
 import com.example.springdemo.services.UserService;
 
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -282,6 +284,27 @@ public class UserApiController {
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Send authentication code failure."));
+    }
+
+    @PostMapping("api/user/unfollowUser")
+    public ResponseEntity unfollowUser(@RequestBody Map<String, String> requestBody) {
+        int userId = 0;
+        int followedId = 0;
+        try {
+            userId = Integer.parseInt(requestBody.get("uid"));
+            followedId = Integer.parseInt(requestBody.get("flid"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(StatusBodyMessageService.statusNotAcceptable());
+        }
+
+        int res = userService.unfollowUser(userId, followedId);
+
+        if(res == 1) {
+            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StatusBodyMessageService.statusBadRequest());
+        }
+
     }
 
 }

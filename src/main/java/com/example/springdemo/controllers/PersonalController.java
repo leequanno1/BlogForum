@@ -7,12 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -95,12 +91,11 @@ public class PersonalController {
     /**
      * Handle render Personal Post view
      * @param model model to fill into view.
-     * @param param the request param information.
+     * @param request the request param information.
      * @return personal view at followed posts nav.
      * */
     @GetMapping("/followedposts")
-    public String showFollowedPosts (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request) {
-        int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
+    public String showFollowedPosts (Model model, HttpServletRequest request) {
         UserInfoService.addUserInfoToModel(model,request);
         model.addAttribute("nav", "followedposts");
         return "personal";
@@ -109,11 +104,11 @@ public class PersonalController {
     /**
      * Handle render Personal Post view
      * @param model model to fill into view.
-     * @param param the request param information.
+     * @param request the request param information.
      * @return personal view at followed user nav.
      * */
     @GetMapping("/followedusers")
-    public String showFollowedUsers (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request) {
+    public String showFollowedUsers (Model model, HttpServletRequest request) {
         int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
         UserInfoService.addUserInfoToModel(model,request);
         UserService userService = new UserService();
@@ -126,11 +121,11 @@ public class PersonalController {
     /**
      * Handle render Personal Post view
      * @param model model to fill into view.
-     * @param param the request param information.
+     * @param request the request information.
      * @return personal view at follower nav.
      * */
     @GetMapping("/followers")
-    public String showFollower (Model model, @RequestParam Map<String, Object> param, HttpServletRequest request) {
+    public String showFollower (Model model,  HttpServletRequest request) {
         int userId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
         UserInfoService.addUserInfoToModel(model,request);
         UserService userService = new UserService();
@@ -140,6 +135,9 @@ public class PersonalController {
         return "personal";
     }
 
+    /**
+     * Render modify personal information view
+     * */
     @GetMapping("/modify")
     public String modifyPersonalInformation(Model model, HttpServletRequest request) {
         UserInfoService.addUserInfoToModel(model,request);
@@ -147,6 +145,9 @@ public class PersonalController {
         return "modify_personal_information";
     }
 
+    /**
+     * Render change password view
+     * */
     @GetMapping("/modify/password")
     public String changePassword(Model model, HttpServletRequest request) {
         UserInfoService.addUserInfoToModel(model,request);
@@ -156,6 +157,9 @@ public class PersonalController {
         return "change_password";
     }
 
+    /**
+     * Handle submit change information
+     * */
     @PostMapping("/modify/changeinfo")
     public String changeInfo(HttpServletRequest request, RedirectAttributes redirectAttributes,
                              @RequestParam Map<String, Object> param) {
@@ -179,8 +183,11 @@ public class PersonalController {
         return "redirect:/personal";
     }
 
+    /**
+     * Handle submit change password.
+     * */
     @PostMapping("/modify/passwordprocess")
-    public String changePasswordProcess(Model model, HttpServletRequest request, @Valid @ModelAttribute ChangePasswordForm form, RedirectAttributes redirectAttributes) {
+    public String changePasswordProcess(HttpServletRequest request, @Valid @ModelAttribute ChangePasswordForm form, RedirectAttributes redirectAttributes) {
         if(form.getOldPassword().isEmpty()){
             redirectAttributes.addFlashAttribute("oldPasswordRequired", true);
         }
