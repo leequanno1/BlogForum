@@ -208,6 +208,28 @@ public class UserService extends DatabaseService {
         return userInfo;
     }
 
+    public Map<String, Object> getAccountInfoByUsername(String username) {
+        Map<String, Object> userInfo = new HashMap<>();
+
+        try (Connection connection = getDataSource().getConnection()) {
+            String query = "SELECT Username, DisplayName, AvatarURL FROM \"User\" WHERE Username = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, username);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        userInfo.put("Username", resultSet.getString("Username"));
+                        userInfo.put("DisplayName", resultSet.getString("DisplayName"));
+                        userInfo.put("AvatarURL", resultSet.getString("AvatarURL"));
+                    }
+                }
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return userInfo;
+    }
+
 
     /**
      * Retrieves all account information associated with a UserID from the database.

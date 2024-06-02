@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/personal_posts.css">
+    <link rel="stylesheet" href="/css/header.css">
+</head>
+<body>
+    <div th:if="${userInfo == null}" >
+        <div th:replace="fragments/unlogged_header :: unlogged_header"></div>
+    </div>
+    <div th:if="${userInfo != null}">
+        <div  th:replace="fragments/logged_header :: logged_header"></div>
+    </div>
+
+    <main class="py-5 pt-5" style="padding-top: 100px !important;">
+        <div th:text="${totalPages}"></div>
+        <div class="container">
+            <!-- Profile Header -->
+            <div class="profile-header d-flex justify-content-start">
+                <div class="avatar-with-name">
+                    <img th:src="${selectedUser.AvatarURL}"
+                         alt="Avatar" class="profile-avatar mr-3">
+                    <div class="flex-column justify-content-start mr-5">
+                        <h3 class="mt-3" th:text="${selectedUser.DisplayName}"></h3>
+                        <p class="text-muted" th:text="'@'+${selectedUser.Username}"></p>
+                    </div>
+                </div>
+            </div>
+            <!-- Content -->
+            <div>
+                <h2>Posts go here</h2>
+                <div class="posts">
+                    <div th:each="post : ${postList}" class="post">
+                        <a href="#">
+                            <h2 th:text="${post.title}"></h2>
+                        </a>
+                        <div class="author-info d-flex align-items-center">
+                            <a href="#">
+                                <img
+                                        th:src="${post.user.avatarURL}"
+                                        alt="Avatar" class="avatar mr-2">
+                            </a>
+                            <a href="#">
+                                <span class="author" th:text="${post.user.displayName}"></span>
+                            </a>
+                            <a href="#" class="ml-auto">
+                                <span class="date" th:text="${post.createdAt}">April 30, 2024</span>
+                            </a>
+                        </div>
+                        <div class="tags mt-2" >
+                            <a th:each="tag : ${post.tags}" href="#">
+                                <span class="tag mr-1" th:text="${tag.tagName}"></span>
+                            </a>
+                            <!-- Add more tags here -->
+                        </div>
+                        <div class="metrics mt-2">
+                            <span class="comments mr-3" th:text="${post.comments} + ' comment(s)'"></span>
+                            <span class="votes" th:text="${post.votes} + ' vote(s)'"></span>
+                        </div>
+                    </div>
+                    <!-- Add more posts here -->
+                </div>
+
+            </div>
+
+        </div>
+        <div th:replace="fragments/total_pages :: total_page"></div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/js/header.js"></script>
+</body>
+</html>
