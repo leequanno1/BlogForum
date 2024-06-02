@@ -279,4 +279,85 @@ public class ArticleController {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
     }
+
+    /**
+     * Endpoint to upvote an article
+     *
+     * @param request the request body containing user ID and article ID
+     * @return ResponseEntity indicating the status of the upvote operation
+     */
+    @PostMapping("/api/article/upvote")
+    public ResponseEntity<?> upVoteArticle(@RequestBody Map<String, Integer> request) {
+        ArticleService articleService = new ArticleService();
+
+        int userId = request.get("userId");
+        int articleId = request.get("articleId");
+        boolean success = articleService.upVoteArticle(userId, articleId);
+        if (success) {
+            return ResponseEntity.ok("Article upvoted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upvote article");
+        }
+    }
+
+    /**
+     * Endpoint to downvote an article
+     *
+     * @param request the request body containing user ID and article ID
+     * @return ResponseEntity indicating the status of the downvote operation
+     */
+    @PostMapping("/api/article/downvote")
+    public ResponseEntity<?> downVoteArticle(@RequestBody Map<String, Integer> request) {
+        ArticleService articleService = new ArticleService();
+
+        int userId = request.get("userId");
+        int articleId = request.get("articleId");
+        boolean success = articleService.downVoteArticle(userId, articleId);
+        if (success) {
+            return ResponseEntity.ok("Article downvoted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to downvote article");
+        }
+    }
+
+    /**
+     * Endpoint to bookmark an article
+     *
+     * @param request the request body containing user ID and article ID
+     * @return ResponseEntity indicating the status of the bookmark operation
+     */
+    @PostMapping("/api/article/addBookmark")
+    public ResponseEntity<?> bookmarkArticle(@RequestBody Map<String, Integer> request) {
+        ArticleService articleService = new ArticleService();
+
+        int userId = request.get("userId");
+        int articleId = request.get("articleId");
+        boolean success = articleService.bookmarkArticle(userId, articleId);
+        if (success) {
+            return ResponseEntity.ok("Article bookmarked successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to bookmark article");
+        }
+    }
+
+    /**
+     * Endpoint to unbookmark an article
+     *
+     * @param request the request body containing user ID and article ID
+     * @return ResponseEntity indicating the status of the unbookmark operation
+     */
+    @PostMapping("/api/article/unbookmark")
+    public ResponseEntity<?> unbookmarkArticle(@RequestBody Map<String, Integer> request) {
+        ArticleService articleService = new ArticleService();
+
+        int userId = request.get("userId");
+        int articleId = request.get("articleId");
+        boolean success = articleService.unbookmarkArticle(userId, articleId);
+        if (success) {
+            return ResponseEntity.ok("Article unbookmarked successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to unbookmark article");
+        }
+    }
+
 }

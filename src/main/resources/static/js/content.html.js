@@ -1,3 +1,7 @@
+/**
+ * Handles UI elements related to article interactions.
+ */
+
 let bookmarkButton = document.getElementById("bookmark");
 let isBookmark = document.getElementById("isBookmark");
 
@@ -16,24 +20,28 @@ let commentContent = document.getElementById("commentContent");
 let sendCommentButton = document.getElementById("sendCommentButton");
 let commentList = document.getElementById("commentList");
 
+
 let upvoteCheck = () => {
     upvote.classList.add("btn-success");
     upvote.classList.remove("btn-outline-success");
     isUpvote.checked = true;
     vote.innerText = parseInt(vote.innerText) + 1;
 }
+
 let upvoteUncheck = () => {
     upvote.classList.add("btn-outline-success");
     upvote.classList.remove("btn-success");
     isUpvote.checked = false;
     vote.innerText = parseInt(vote.innerText) - 1;
 }
+
 let downvoteCheck = () => {
     downvote.classList.add("btn-danger");
     downvote.classList.remove("btn-outline-danger");
     isDownvote.checked = true;
     vote.innerText = parseInt(vote.innerText) - 1;
 }
+
 let downvoteUncheck = () => {
     downvote.classList.add("btn-outline-danger");
     downvote.classList.remove("btn-danger");
@@ -43,7 +51,7 @@ let downvoteUncheck = () => {
 
 isBookmark.addEventListener("change", (e) => {
     let icon = document.getElementById("bookmarkIcon")
-    if(isBookmark.checked) {
+    if (isBookmark.checked) {
         icon.classList.add("fa-solid");
     } else {
         icon.classList.remove("fa-solid");
@@ -51,7 +59,7 @@ isBookmark.addEventListener("change", (e) => {
 })
 
 isFollow.addEventListener("change", (e) => {
-    if(isFollow.checked) {
+    if (isFollow.checked) {
         follow.innerText = "Đã theo dõi";
     } else {
         follow.innerText = "Theo dõi";
@@ -59,9 +67,9 @@ isFollow.addEventListener("change", (e) => {
 })
 
 isUpvote.addEventListener("change", (e) => {
-    if(isUpvote.checked) {
+    if (isUpvote.checked) {
         upvoteCheck();
-        if(isDownvote.checked){
+        if (isDownvote.checked) {
             downvoteUncheck();
         }
     } else {
@@ -70,9 +78,9 @@ isUpvote.addEventListener("change", (e) => {
 })
 
 isDownvote.addEventListener("change", (e) => {
-    if(isDownvote.checked) {
+    if (isDownvote.checked) {
         downvoteCheck();
-        if(isUpvote.checked) {
+        if (isUpvote.checked) {
             upvoteUncheck();
         }
     } else {
@@ -80,8 +88,107 @@ isDownvote.addEventListener("change", (e) => {
     }
 })
 
+// Function to retrieve cookie value by name
+function getCookie(name) {
+    let cookieArr = document.cookie.split(";");
+    for (let i = 0; i < cookieArr.length; i++) {
+        let cookiePair = cookieArr[i].split("=");
+        if (name == cookiePair[0].trim()) {
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    return null;
+}
+
+
+// Event listener for bookmark button click
+bookmarkButton.addEventListener("click", (e) => {
+    let url = isBookmark.checked ? '/api/article/unbookmark' : '/api/article/addBookmark';
+    fetch(url, {
+        method: 'POST', headers: {
+            'Content-Type': 'application/json'
+        }, body: JSON.stringify({
+            userId: getCookie("SessionUserID"), articleId: new URLSearchParams(window.location.search).get('id')
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'OK') {
+                isBookmark.checked = !isBookmark.checked;
+                console.log("Bookmark toggled successfully!");
+            } else {
+                console.log("Failed to toggle bookmark.");
+            }
+        })
+});
+
+// Event listener for upvote button click
+upvote.addEventListener("click", (e) => {
+    if (!isUpvote.checked) {
+        fetch('/api/article/upvote', {
+            method: 'POST', headers: {
+                'Content-Type': 'application/json'
+            }, body: JSON.stringify({
+                userId: getCookie("SessionUserID"),
+                articleId: new URLSearchParams(window.location.search).get('id')
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Upvoted successfully!");
+                } else {
+                    console.log("Failed to upvote.");
+                }
+            })
+    }
+});
+
+// Event listener for downvote button click
+downvote.addEventListener("click", (e) => {
+    if (!isDownvote.checked) {
+        fetch('/api/article/downvote', {
+            method: 'POST', headers: {
+                'Content-Type': 'application/json'
+            }, body: JSON.stringify({
+                userId: getCookie("SessionUserID"),
+                articleId: new URLSearchParams(window.location.search).get('id')
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Downvoted successfully!");
+                } else {
+                    console.log("Failed to downvote.");
+                }
+            })
+    }
+});
+
+// Event listener for follow button click
+follow.addEventListener("click", (e) => {
+    let url = isFollow.checked ? "api/user/unfollowUser" : "api/user/followUser";
+
+    fetch(url, {
+        method: 'POST', headers: {
+            'Content-Type': 'application/json'
+        }, body: JSON.stringify({
+            uid: getCookie("SessionUserID"),
+            flid: document.getElementById("userIDofArticle").value
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log("Follow successfully");
+            } else {
+                console.log("Failure successfully");
+            }
+        })
+
+});
+
+// Event listener for send comment button click
 sendCommentButton.addEventListener("click", (e) => {
-    if(commentContent.value) {
+    if (commentContent.value) {
         let avt = document.querySelector(".profile-avatar");
         let visibleName = document.querySelector(".displayName").innerHTML;
 
@@ -96,6 +203,24 @@ sendCommentButton.addEventListener("click", (e) => {
                             <p>${commentContent.value}</p>
                         </div>`
         commentList.innerHTML = comment + commentList.innerHTML;
-        commentContent.value = "";
     }
-})
+
+
+    let urlParams = new URLSearchParams(window.location.search);
+
+    // Call api
+    fetch('/api/comment/add', {
+        method: 'PUT', headers: {
+            'Content-Type': 'application/json'
+        }, body: JSON.stringify({
+            userId: getCookie("SessionUserID"), articleId: urlParams.get('id'), content: commentContent.value
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log("Comment added successfully!");
+            } else {
+                console.log("Failed to add comment.");
+            }
+        })
+});

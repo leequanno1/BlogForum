@@ -25,3 +25,8 @@ main {
 .bookmark-checked {
     background-color: #007bff;
 }
+
+.card.mb-3.next-post:nth-child(n+2) {
+    margin-left: 15px;
+}
+
