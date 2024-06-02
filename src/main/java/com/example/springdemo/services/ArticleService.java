@@ -17,7 +17,7 @@ public class ArticleService extends DatabaseService {
     /**
      * SQL query to get Vote value in an article by using article id
      */
-    private static final String GET_VOTE_VALUE                  =   " SELECT SUM(CASE WHEN VoteValue = 1 THEN 1 ELSE 0 END) AS TotalVotes\n" +
+    private static final String GET_VOTE_VALUE                  =   " SELECT SUM(CASE WHEN VoteValue = 1 THEN 1 ELSE -1 END) AS TotalVotes\n" +
                                                                     "FROM Vote\n" +
                                                                     "WHERE ArticleID = ?\n" +
                                                                     "GROUP BY ArticleID";

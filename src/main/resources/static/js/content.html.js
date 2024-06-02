@@ -20,6 +20,15 @@ let commentContent = document.getElementById("commentContent");
 let sendCommentButton = document.getElementById("sendCommentButton");
 let commentList = document.getElementById("commentList");
 
+if(isUpvote.checked) {
+    upvote.classList.add("btn-success");
+    upvote.classList.remove("btn-outline-success");
+}
+if(isDownvote.checked) {
+    downvote.classList.add("btn-danger");
+    downvote.classList.remove("btn-outline-danger");
+}
+
 
 let upvoteCheck = () => {
     upvote.classList.add("btn-success");

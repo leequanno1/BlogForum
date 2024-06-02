@@ -30,12 +30,12 @@
                 <div class="col-lg-2 sidebar">
                     <div class="d-flex flex-column align-items-center sticky-top">
                         <label id="upvote" for="isUpvote" class="btn btn-outline-success mb-2"><i class="fa-solid fa-caret-up"></i></label>
-                        <input id="isUpvote" class="d-none" type="checkbox">
+                        <input id="isUpvote" class="d-none" type="checkbox" th:checked="${content.votedValue != null && content.votedValue == true}">
 
                         <span class="mb-2"><span id="vote" th:text="${content.votes}">0</span> Votes</span>
 
                         <label id="downvote" for="isDownvote" class="btn btn-outline-danger mb-2 "><i class="fa-solid fa-caret-down"></i></label>
-                        <input id="isDownvote" class="d-none" type="checkbox">
+                        <input id="isDownvote" class="d-none" type="checkbox" th:checked="${content.votedValue != null && content.votedValue == false}">
 
                         <label id="bookmark" for="isBookmark" class="btn mb-2"
                                th:classappend="${content.isBookMark} ? 'btn-primary' : 'btn-outline-primary'">
