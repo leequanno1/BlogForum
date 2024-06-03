@@ -292,7 +292,9 @@ public class ArticleController {
 
         int userId = request.get("userId");
         int articleId = request.get("articleId");
-        boolean success = articleService.upVoteArticle(userId, articleId);
+        int checked = request.get("checked");
+
+        boolean success = articleService.upVoteArticle(userId, articleId, checked);
         if (success) {
             return ResponseEntity.ok("Article upvoted successfully");
         } else {
@@ -312,7 +314,9 @@ public class ArticleController {
 
         int userId = request.get("userId");
         int articleId = request.get("articleId");
-        boolean success = articleService.downVoteArticle(userId, articleId);
+        int checked = request.get("checked");
+
+        boolean success = articleService.downVoteArticle(userId, articleId, checked);
         if (success) {
             return ResponseEntity.ok("Article downvoted successfully");
         } else {
