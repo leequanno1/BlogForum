@@ -4,9 +4,7 @@ import com.example.springdemo.form.ForgotPasswordForm;
 import com.example.springdemo.form.LoginForm;
 import com.example.springdemo.form.ResetPasswordForm;
 import com.example.springdemo.form.SignUpForm;
-import com.example.springdemo.services.EmailService;
-import com.example.springdemo.services.TokenService;
-import com.example.springdemo.services.UserService;
+import com.example.springdemo.services.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,10 +15,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -41,6 +41,7 @@ public class UserController {
      */
     private final EmailService emailService = new EmailService();
 
+    private final ArticleService articleService = new ArticleService();
 
     /**
      * Handles GET requests to /login. Displays the login page.
@@ -315,6 +316,53 @@ public class UserController {
 
         // Redirect to home page
         return new ModelAndView("redirect:/");
+    }
+
+    @GetMapping("/user")
+    public String getUserInfoView(Model model, HttpServletRequest request, @RequestParam Map<String, String> param){
+        UserInfoService.addUserInfoToModel(model, request);
+        String username;
+        int page = 1;
+        Map<String, Object> selectedUser;
+        if(param.containsKey("user")) {
+            username = param.get("user");
+            // get user information by username
+            selectedUser = userService.getAccountInfoByUsername(username);
+            if (selectedUser.isEmpty()){
+                return "redirect:/";
+            }
+        } else {
+            return "redirect:/";
+        }
+
+        if(param.containsKey("page")) {
+            page = Integer.parseInt(param.get("page"));
+        }
+        int followerId;
+        Boolean isFollowed = null;
+        try {
+            followerId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
+            isFollowed = userService.isFollowingUser(followerId, (int)selectedUser.get("UserID"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // check if this user is followed
+        // get post list
+        List<Object> postList = articleService.getAllByUserUsername(username,5,page);
+        model.addAttribute("selectedUser", selectedUser);
+        model.addAttribute("isFollowed", isFollowed);
+        model.addAttribute("postList", postList);
+        handlePageNav(model, username, page);
+        return "user_info";
+    }
+
+    private void handlePageNav(Model model, String username, int page) {
+        int pageSize = 5;
+        int totalPages = (int) Math.ceil((double) articleService.getTotalArticleByUserName(username)/ pageSize);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("username", username);
+        model.addAttribute("rout", "/user");
     }
 
 }

@@ -61,6 +61,10 @@ public class ArticleService extends DatabaseService {
                                                                     "WHERE us.[UserID] = ?" +
                                                                     GET_ALL_BOTTOM;
 
+    private static final String GET_BY_USERNAME                   =    GET_ALL_TOP +
+                                                                     "WHERE us.[UserName] = ?" +
+                                                                     GET_ALL_BOTTOM;
+
     /**
      * SQL query to get a list of all article of a page by using article title
      */
@@ -126,6 +130,12 @@ public class ArticleService extends DatabaseService {
      * SQL query to get the total number of articles
      */
     private static final String GET_TOTAL_ARTICLE               =   "SELECT COUNT(*) AS totalArticle FROM [Article]";
+
+    private static final String GET_TOTAL_ARTICLE_BY_USERNAME   = "SELECT COUNT(atc.UserID) AS TotalArticle FROM [Article] atc\n" +
+                                                                  "INNER JOIN [User] us ON atc.UserID = us.UserID\n" +
+                                                                  "WHERE us.Username = ?";
+    private static final String GET_TOTAL_ARTICLE_BY_USERID     = "SELECT COUNT(UserID) AS TotalArticle FROM [Article] \n" +
+                                                                  "WHERE UserID = ?";
 
     /**
      * SQL query to get the total number of articles for a specific tag
@@ -237,6 +247,42 @@ public class ArticleService extends DatabaseService {
                 ResultSet resultSet = preparedStatement.executeQuery();
                 if (resultSet.next()) {
                     totalArticle = resultSet.getInt("totalArticle");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalArticle;
+    }
+
+    public int getTotalArticleByUserID(int userId) {
+        int totalArticle = 0;
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(GET_TOTAL_ARTICLE_BY_USERID)) {
+                preparedStatement.setInt(1, userId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    totalArticle = resultSet.getInt("TotalArticle");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalArticle;
+    }
+
+    /**
+     * Sub service to get the total number of articles.
+     * @return the total number of articles
+     */
+    public int getTotalArticleByUserName(String username) {
+        int totalArticle = 0;
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(GET_TOTAL_ARTICLE_BY_USERNAME)) {
+                preparedStatement.setString(1, username);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    totalArticle = resultSet.getInt("TotalArticle");
                 }
             }
         } catch (SQLException e) {
@@ -665,6 +711,26 @@ public class ArticleService extends DatabaseService {
         }
         return res;
     }
+    /**
+     * Service to get the article list of a page by using user id
+     * @param userID the user's id
+     * @param quantity the maximum quantity of a page. Default value is: 6.
+     * @param page the current page of a list. Default value is: 1.
+     * */
+    public List<Object> getAllByUserUsername(String username ,int quantity, int page) {
+        List<Object> res = new ArrayList<>();
+        try(Connection connection = getDataSource().getConnection()) {
+            try(PreparedStatement preparedStatement = connection.prepareStatement(GET_BY_USERNAME)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setInt(2, quantity*(page-1) + 1);
+                preparedStatement.setInt(3, quantity*(page-1) + quantity);
+                handleGetArticleList(res, preparedStatement);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
 
 
     /**
@@ -794,6 +860,7 @@ public class ArticleService extends DatabaseService {
                     user.put("displayName", resultSet.getString("DisplayName"));
                     res.put("user", user);
                     res.put("tags", getTagList(resultSet.getInt("ArticleID")));
+                    res.put("createdAt", resultSet.getString("CreatedAt"));
                 }
             }
         } catch (SQLException e) {
@@ -986,5 +1053,6 @@ public class ArticleService extends DatabaseService {
         }
         return true;
     }
+
 
 }

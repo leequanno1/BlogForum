@@ -46,6 +46,7 @@
             <div class="content" th:if="${nav == 'followedposts'}" th:include="fragments/personal/followed_posts :: followedposts"></div>
             <div class="content" th:if="${nav == 'followedusers'}" th:include="fragments/personal/followed_users :: followedusers"></div>
             <div class="content" th:if="${nav == 'follower'}" th:include="fragments/personal/followers :: followers"></div>
+            <div th:if="${nav == 'posts' || nav == 'bookmark'}" th:replace="/fragments/total_pages :: total_page"></div>
 
 
         </div>
