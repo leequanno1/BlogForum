@@ -338,12 +338,19 @@ public class UserController {
         if(param.containsKey("page")) {
             page = Integer.parseInt(param.get("page"));
         }
-
+        int followerId;
+        Boolean isFollowed = null;
+        try {
+            followerId = Integer.parseInt(CookieService.getCookieValue(request,CookieService.cookieUserIdKey));
+            isFollowed = userService.isFollowed(followerId, (int)selectedUser.get("UserID"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // check if this user is followed
-
         // get post list
         List<Object> postList = articleService.getAllByUserUsername(username,5,page);
         model.addAttribute("selectedUser", selectedUser);
+        model.addAttribute("isFollowed", isFollowed);
         model.addAttribute("postList", postList);
         handlePageNav(model, username, page);
         return "user_info";

@@ -17,10 +17,10 @@
     </div>
 
     <main class="py-5 pt-5" style="padding-top: 100px !important;">
-        <div th:text="${totalPages}"></div>
         <div class="container">
             <!-- Profile Header -->
             <div class="profile-header d-flex justify-content-start">
+                <input type="hidden" name="userId" id="userId" th:value="${selectedUser.UserID}">
                 <div class="avatar-with-name">
                     <img th:src="${selectedUser.AvatarURL}"
                          alt="Avatar" class="profile-avatar mr-3">
@@ -29,6 +29,10 @@
                         <p class="text-muted" th:text="'@'+${selectedUser.Username}"></p>
                     </div>
                 </div>
+                <label for="isFollowed" id="followButton" class="btn btn-primary btn-justify" href="/personal/modify" style="height: fit-content;align-self: center;" th:if="${isFollowed != null && isFollowed == true}">Followed</label>
+                <label for="isFollowed" id="followButton" class="btn btn-primary btn-justify" href="/personal/modify" style="height: fit-content;align-self: center;" th:if="${isFollowed != null && isFollowed == false}">Follow</label>
+                <input type="checkbox" class="d-none" id="isFollowed" th:if="${isFollowed != null}" th:checked="${isFollowed}">
+                <button id="followButtonDisable" class="btn btn-primary btn-justify" href="/personal/modify" style="height: fit-content;align-self: center;" th:if="${isFollowed == null}" disabled>Follow</button>
             </div>
             <!-- Content -->
             <div>
@@ -75,5 +79,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="/js/header.js"></script>
+    <script src="/js/userInfo.js"></script>
 </body>
 </html>

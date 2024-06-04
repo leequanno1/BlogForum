@@ -212,11 +212,12 @@ public class UserService extends DatabaseService {
         Map<String, Object> userInfo = new HashMap<>();
 
         try (Connection connection = getDataSource().getConnection()) {
-            String query = "SELECT Username, DisplayName, AvatarURL FROM \"User\" WHERE Username = ?";
+            String query = "SELECT UserID, Username, DisplayName, AvatarURL FROM \"User\" WHERE Username = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, username);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
+                        userInfo.put("UserID", resultSet.getInt("UserID"));
                         userInfo.put("Username", resultSet.getString("Username"));
                         userInfo.put("DisplayName", resultSet.getString("DisplayName"));
                         userInfo.put("AvatarURL", resultSet.getString("AvatarURL"));
@@ -469,5 +470,20 @@ public class UserService extends DatabaseService {
             e.printStackTrace();
         }
         return 1;
+    }
+
+    public boolean isFollowed(int follwerId, int followedId) {
+        String SQL = "SELECT COUNT(FollowID) AS IsExist FROM [Follow] WHERE FollowerID = ? AND FollowedUserID = ?";
+        try (Connection connection = getDataSource().getConnection()){
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)){
+                preparedStatement.setInt(1,follwerId);
+                preparedStatement.setInt(2,followedId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                return resultSet.getInt("IsExist") > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
