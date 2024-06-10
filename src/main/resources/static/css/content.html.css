@@ -30,3 +30,70 @@ main {
     margin-left: 15px;
 }
 
+/* CSS for message box of content page*/
+body {
+    position: relative;
+}
+
+#messageBoxForContentPage {
+    padding: 10px 15px 10px 0;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    background-color: #fff;
+    border-left: 15px #ffc941 solid;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+    position: fixed;
+    top: 20px;
+    left: 37%;
+    z-index: 1000;
+    transition: all ease-in 0.6s;
+    animation: showmessageBoxForContentPage ease 0.6s;
+}
+
+.fa-circle-exclamation {
+    margin: 0 10px;
+    font-size: 25px;
+    color: #ffc941;
+}
+
+.fa-solid.fa-xmark {
+    top: 10px;
+    right: 10px;
+    position: absolute;
+}
+
+#messageBoxForContentPage p {
+    margin: 0;
+}
+
+#containMessageContent {
+    padding: 0 10px;
+}
+
+#containMessageContent h5 {
+    font-weight: bold;
+}
+
+@keyframes showmessageBoxForContentPage {
+    from {
+        transform: translateY(-100px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+#btnCloseMessageBox {
+    cursor: pointer;
+}
+
+.image {
+    width: 100% !important;
+}
+
+.image img {
+    width: 100% !important;
+    height: fit-content !important;
+}

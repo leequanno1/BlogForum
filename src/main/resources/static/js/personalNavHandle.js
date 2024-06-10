@@ -1,7 +1,6 @@
 const navList = ["navPosts", "navBookmark", "navFollowedPosts", "navFollowedUsers", "navFollowers"];
 const pathnames = window.location.pathname.split("/");
 
-console.log(document.cookie);
 const activeNav = function (id) {
     document.getElementById(id).classList.add("active");
 }

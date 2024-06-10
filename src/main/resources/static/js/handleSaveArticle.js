@@ -7,6 +7,7 @@ postArticle.addEventListener('click' , async (e) => {
     if (!(validateTitle() && validateTag() && validateContent())) {
         return;
     }
+    let newArticleID = 0;
     loadingSpinner();
     await (fetch('/api/article/newbase64', {
         method: 'POST',
@@ -22,12 +23,15 @@ postArticle.addEventListener('click' , async (e) => {
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            newArticleID = parseInt(data.message);
         })
         .catch(error => {
             console.error('Error:', error);
         }));
     doneLoading();
+    if (newArticleID !== 0) {
+        document.location.href = `/content?id=${newArticleID}`;
+    }
 })
 
 const loadingSpinner = function () {

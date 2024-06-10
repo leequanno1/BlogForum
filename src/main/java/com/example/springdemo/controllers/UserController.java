@@ -331,6 +331,12 @@ public class UserController {
             if (selectedUser.isEmpty()){
                 return "redirect:/";
             }
+            if(request.getSession().getAttribute("userInfo") != null) {
+                Map<String, Object> userInfo = (Map<String, Object>) request.getSession().getAttribute("userInfo");
+                if(userInfo.get("Username").toString().equals(username)) {
+                    return "redirect:/personal";
+                }
+            }
         } else {
             return "redirect:/";
         }

@@ -3,3 +3,12 @@
     flex-wrap: wrap;
     gap: 10px;
 }
+
+.card-image-container {
+    height: 12rem;
+    display: flex;
+}
+
+.card-image-container img {
+    object-fit: cover;
+}

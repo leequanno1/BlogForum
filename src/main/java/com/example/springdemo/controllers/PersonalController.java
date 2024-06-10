@@ -45,7 +45,7 @@ public class PersonalController {
         List<Object> postList = articleService.getAllByUserID(userId,5,getPageFromParam(param));
         model.addAttribute("postList", postList);
         model.addAttribute("nav", "posts");
-        handlePageNav(model,userId,getPageFromParam(param));
+        handlePostsNav(model,userId,getPageFromParam(param));
         return "personal";
     }
 
@@ -86,7 +86,7 @@ public class PersonalController {
         List<Object> postList = articleService.getAllBookmark(userId,6,getPageFromParam(param));
         model.addAttribute("postList", postList);
         model.addAttribute("nav", "bookmark");
-        handlePageNav(model,userId,getPageFromParam(param));
+        handleBookmarkNav(model,userId,getPageFromParam(param));
         return "personal";
     }
 
@@ -214,12 +214,21 @@ public class PersonalController {
         return "redirect:/personal/modify/password";
     }
 
-    private void handlePageNav(Model model, int userId ,int page) {
+    private void handlePostsNav(Model model, int userId , int page) {
         ArticleService articleService = new ArticleService();
         int pageSize = 5;
         int totalPages = (int) Math.ceil((double) articleService.getTotalArticleByUserID(userId)/ pageSize);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("rout", "/personal/posts");
+    }
+
+    private void handleBookmarkNav(Model model, int userId , int page) {
+        ArticleService articleService = new ArticleService();
+        int pageSize = 5;
+        int totalPages = (int) Math.ceil((double) articleService.getTotalArticleByBookmark(userId)/ pageSize);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("rout", "/personal/bookmark");
     }
 }

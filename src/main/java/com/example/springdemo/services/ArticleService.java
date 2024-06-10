@@ -17,10 +17,14 @@ public class ArticleService extends DatabaseService {
     /**
      * SQL query to get Vote value in an article by using article id
      */
-    private static final String GET_VOTE_VALUE                  =   " SELECT SUM(CASE WHEN VoteValue = 1 THEN 1 ELSE -1 END) AS TotalVotes\n" +
-                                                                    "FROM Vote\n" +
-                                                                    "WHERE ArticleID = ?\n" +
-                                                                    "GROUP BY ArticleID";
+//    private static final String GET_VOTE_VALUE                  =   " SELECT SUM(CASE WHEN VoteValue = 1 THEN 1 ELSE -1 END) AS TotalVotes\n" +
+//                                                                    "FROM Vote\n" +
+//                                                                    "WHERE ArticleID = ?\n" +
+//                                                                    "GROUP BY ArticleID";
+    private static final String GET_VOTE_VALUE                  =   "SELECT SUM(CASE WHEN VoteValue = 1 THEN 1 ELSE -1 END) AS TotalVotes " +
+                                                                    "FROM Vote " +
+                                                                    "WHERE ArticleID = ?";
+
 
     /**
      * SQL query to get a list of tag in an article by using article id
@@ -136,7 +140,26 @@ public class ArticleService extends DatabaseService {
                                                                   "WHERE us.Username = ?";
     private static final String GET_TOTAL_ARTICLE_BY_USERID     = "SELECT COUNT(UserID) AS TotalArticle FROM [Article] \n" +
                                                                   "WHERE UserID = ?";
+    
+    private static final String GET_TOTAL_ARTICLE_BY_BOOKMARK     = "SELECT COUNT(UserID) AS TotalArticle FROM bookmark WHERE UserID = ?";
 
+    private static final String GET_LAST_ARTICLE_ID_BY_USERID     = "SELECT TOP(1) ArticleID FROM Article \n" +
+                                                                    "WHERE UserID = ? \n" +
+                                                                    "ORDER BY CreatedAt DESC";
+
+
+    private static final String GET_USER_AUTHORIZED              =  "SELECT ArticleID, UserID FROM Article \n" +
+                                                                    "WHERE ArticleID = ? AND UserID = ?";
+
+    private static final String DELETE_POST                      =  "DELETE FROM ArticleTag WHERE ArticleID = ?\n" +
+                                                                    "GO\n" +
+                                                                    "DELETE FROM Comment WHERE ArticleID = ?\n" +
+                                                                    "GO\n" +
+                                                                    "DELETE FROM Vote WHERE ArticleID = ?\n" +
+                                                                    "GO\n" +
+                                                                    "DELETE FROM Bookmark WHERE ArticleID = ?\n" +
+                                                                    "GO\n" +
+                                                                    "DELETE FROM [Article] WHERE ArticleID = ? AND UserID = ?";
     /**
      * SQL query to get the total number of articles for a specific tag
      */
@@ -191,8 +214,8 @@ public class ArticleService extends DatabaseService {
     private static final String GET_NEXT_ARTICLE               =    "SELECT TOP 3 a.ArticleID,a.Title, a.UserID, u.Username, u.DisplayName " +
                                                                     "FROM Article a " +
                                                                     "JOIN [User] u ON a.UserID = u.UserID " +
-                                                                    "WHERE a.ArticleID > ? " +
-                                                                    "ORDER BY a.ArticleID";
+                                                                    "WHERE a.UserID = ? AND a.ArticleID != ? "+
+                                                                    "ORDER BY a.ArticleID DESC";
 
     /**
      * SQL query to upvote an article or insert if the vote doesn't exist
@@ -232,7 +255,7 @@ public class ArticleService extends DatabaseService {
     /**
      * SQL query to check if a bookmark exists for a given user and article
      */
-    private static final String CHECK_BOOKMARK_EXISTS           =     "SELECT COUNT(*) AS count FROM Bookmark WHERE UserID = ? AND ArticleID = ?";
+    private static final String CHECK_BOOKMARK_EXISTS           =    "SELECT COUNT(*) AS count FROM Bookmark WHERE UserID = ? AND ArticleID = ?";
 
 
     /**
@@ -390,22 +413,38 @@ public class ArticleService extends DatabaseService {
      * @param articleId the ID of the article being upvoted
      * @return true if the upvote is successful, false otherwise
      */
-    public boolean upVoteArticle(int userId, int articleId) {
-        try (Connection conn = getDataSource().getConnection();
-             PreparedStatement ps = conn.prepareStatement(UPVOTE_ARTICLE)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, articleId);
-            ps.setInt(3, userId);
-            ps.setInt(4, articleId);
-            ps.setInt(5, userId);
-            ps.setInt(6, articleId);
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+    public boolean upVoteArticle(int userId, int articleId, int checked) {
+        if (checked == 0) {
+            try (Connection conn = getDataSource().getConnection();
+                 PreparedStatement ps = conn.prepareStatement(UPVOTE_ARTICLE)) {
+                ps.setInt(1, userId);
+                ps.setInt(2, articleId);
+                ps.setInt(3, userId);
+                ps.setInt(4, articleId);
+                ps.setInt(5, userId);
+                ps.setInt(6, articleId);
+                int rowsAffected = ps.executeUpdate();
+                return rowsAffected > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            try (Connection connection = getDataSource().getConnection()) {
+                String sql = "DELETE FROM Vote WHERE VoteUserID = ? AND ArticleID = ?";
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setInt(1, userId);
+                    statement.setInt(2, articleId);
+                    int rowsAffected = statement.executeUpdate();
+                    return rowsAffected > 0;
+                }
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+                return false;
+            }
         }
     }
+
 
 
     /**
@@ -415,20 +454,35 @@ public class ArticleService extends DatabaseService {
      * @param articleId the ID of the article being downvoted
      * @return true if the downvote is successful, false otherwise
      */
-    public boolean downVoteArticle(int userId, int articleId) {
-        try (Connection conn = getDataSource().getConnection();
-             PreparedStatement ps = conn.prepareStatement(DOWNVOTE_ARTICLE)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, articleId);
-            ps.setInt(3, userId);
-            ps.setInt(4, articleId);
-            ps.setInt(5, userId);
-            ps.setInt(6, articleId);
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+    public boolean downVoteArticle(int userId, int articleId, int checked) {
+        if (checked == 0) {
+            try (Connection conn = getDataSource().getConnection();
+                 PreparedStatement ps = conn.prepareStatement(DOWNVOTE_ARTICLE)) {
+                ps.setInt(1, userId);
+                ps.setInt(2, articleId);
+                ps.setInt(3, userId);
+                ps.setInt(4, articleId);
+                ps.setInt(5, userId);
+                ps.setInt(6, articleId);
+                int rowsAffected = ps.executeUpdate();
+                return rowsAffected > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            try (Connection connection = getDataSource().getConnection()) {
+                String sql = "DELETE FROM Vote WHERE VoteUserID = ? AND ArticleID = ?";
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setInt(1, userId);
+                    statement.setInt(2, articleId);
+                    int rowsAffected = statement.executeUpdate();
+                    return rowsAffected > 0;
+                }
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+                return false;
+            }
         }
     }
 
@@ -660,12 +714,13 @@ public class ArticleService extends DatabaseService {
      * @param articleID the ID of the reference article
      * @return a list of next articles
      */
-    public List<Map<String, Object>> getNextArticle(int articleID) {
+    public List<Map<String, Object>> getNextArticle(int articleID, int userID) {
         List<Map<String, Object>> articles = new ArrayList<>();
 
         try (Connection connection = getDataSource().getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(GET_NEXT_ARTICLE)) {
-                preparedStatement.setInt(1, articleID);
+                preparedStatement.setInt(1, userID);
+                preparedStatement.setInt(2, articleID);
 
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
@@ -854,10 +909,13 @@ public class ArticleService extends DatabaseService {
                     res.put("votes", getVoteValue(resultSet.getInt("ArticleID")));
                     res.put("isBookMark", isBookmarkExists(userId, articleId));
                     res.put("isFollow", userService.isFollowingUser(userId, resultSet.getInt("UserID")));
+
+
                     user.put("userIdOfArticle", resultSet.getInt("UserID"));
                     user.put("avatarURL", resultSet.getString("AvatarURL"));
                     user.put("username", resultSet.getString("Username"));
                     user.put("displayName", resultSet.getString("DisplayName"));
+
                     res.put("user", user);
                     res.put("tags", getTagList(resultSet.getInt("ArticleID")));
                     res.put("createdAt", resultSet.getString("CreatedAt"));
@@ -1055,4 +1113,78 @@ public class ArticleService extends DatabaseService {
     }
 
 
+    public int getTotalArticleByBookmark(int userId) {
+        int totalArticle = 0;
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(GET_TOTAL_ARTICLE_BY_BOOKMARK)) {
+                preparedStatement.setInt(1, userId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    totalArticle = resultSet.getInt("TotalArticle");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalArticle;
+    }
+
+    public int getLastArticleIDByUserID(int userId) {
+        int articleID = 0;
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(GET_LAST_ARTICLE_ID_BY_USERID)) {
+                preparedStatement.setInt(1, userId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    articleID = resultSet.getInt("ArticleID");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return articleID;
+    }
+
+    public boolean deleteArticleById(int userId, int articleId) {
+        int row = 0;
+        if(isUserHavaAuthorized(userId, articleId)) {
+            queryUpdateParramInt("DELETE FROM ArticleTag WHERE ArticleID = ?", new int[]{articleId});
+            queryUpdateParramInt("DELETE FROM Comment WHERE ArticleID = ?", new int[]{articleId});
+            queryUpdateParramInt("DELETE FROM Vote WHERE ArticleID = ?", new int[]{articleId});
+            queryUpdateParramInt("DELETE FROM Bookmark WHERE ArticleID = ?", new int[]{articleId});
+            queryUpdateParramInt("DELETE FROM [Article] WHERE ArticleID = ? AND UserID = ?", new int[]{articleId, userId});
+            row++;
+        }
+        return row > 0;
+    }
+
+    private boolean isUserHavaAuthorized(int userId, int articleId) {
+        int row = 0;
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_AUTHORIZED)) {
+                preparedStatement.setInt(1, articleId);
+                preparedStatement.setInt(2, userId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    row++;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return row > 0;
+    }
+
+    private void queryUpdateParramInt(String sql, int[] param) {
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                for(int i = 1; i <= param.length; i++) {
+                    preparedStatement.setInt(i, param[i-1]);
+                }
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

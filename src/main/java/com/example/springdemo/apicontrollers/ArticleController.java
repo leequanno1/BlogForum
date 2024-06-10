@@ -243,21 +243,6 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StatusBodyMessageService.statusNotFound());
     }
 
-//    @PostMapping("/api/article/new")
-//    public ResponseEntity newArticle(@RequestParam("title") String title,
-//                                     @RequestParam("content") String content,
-//                                     @RequestParam("tags") String tags,
-//                                     @RequestParam("images") List<MultipartFile> images,
-//                                     HttpServletRequest request) {
-//        ArticleService articleService = new ArticleService();
-//        Integer userId = Integer.parseInt(CookieService.getCookieValue(request, CookieService.cookieUserIdKey));
-//        boolean result = articleService.handelAddNewArticle(userId, title, content, tags.split(" "), images);
-//        if(result) {
-//            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
-//        }
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
-//    }
-
     /**
      * This function handle upload article content to database and it's image to cloud.
      * @param param This param is a map contain 4 key: title, content, tags, images.
@@ -275,7 +260,8 @@ public class ArticleController {
         Integer userId = Integer.parseInt(CookieService.getCookieValue(request, CookieService.cookieUserIdKey));
         boolean result = articleService.handelAddNewArticleBase64(userId, title, content, tags.split(" "), images);
         if(result) {
-            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
+            int lastArticleID = articleService.getLastArticleIDByUserID(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusMessage(lastArticleID+""));
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
     }
@@ -292,7 +278,9 @@ public class ArticleController {
 
         int userId = request.get("userId");
         int articleId = request.get("articleId");
-        boolean success = articleService.upVoteArticle(userId, articleId);
+        int checked = request.get("checked");
+
+        boolean success = articleService.upVoteArticle(userId, articleId, checked);
         if (success) {
             return ResponseEntity.ok("Article upvoted successfully");
         } else {
@@ -312,7 +300,9 @@ public class ArticleController {
 
         int userId = request.get("userId");
         int articleId = request.get("articleId");
-        boolean success = articleService.downVoteArticle(userId, articleId);
+        int checked = request.get("checked");
+
+        boolean success = articleService.downVoteArticle(userId, articleId, checked);
         if (success) {
             return ResponseEntity.ok("Article downvoted successfully");
         } else {
@@ -357,6 +347,20 @@ public class ArticleController {
             return ResponseEntity.ok("Article unbookmarked successfully");
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to unbookmark article");
+        }
+    }
+
+    @DeleteMapping("/api/article/delete")
+    public ResponseEntity<?> deleteArticleById(@RequestBody Map<String, Integer> request) {
+        ArticleService articleService = new ArticleService();
+
+        int userId = request.get("userId");
+        int articleId = request.get("articleId");
+        boolean success = articleService.deleteArticleById(userId, articleId);
+        if (success) {
+            return ResponseEntity.status(HttpStatus.OK).body(StatusBodyMessageService.statusOk());
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusBodyMessageService.statusInternalServerError());
         }
     }
 

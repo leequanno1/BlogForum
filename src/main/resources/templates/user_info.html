@@ -39,7 +39,7 @@
                 <h2>Posts go here</h2>
                 <div class="posts">
                     <div th:each="post : ${postList}" class="post">
-                        <a href="#">
+                        <a th:href="'/content?id='+${post.articleID}">
                             <h2 th:text="${post.title}"></h2>
                         </a>
                         <div class="author-info d-flex align-items-center">
@@ -48,7 +48,7 @@
                                         th:src="${post.user.avatarURL}"
                                         alt="Avatar" class="avatar mr-2">
                             </a>
-                            <a href="#">
+                            <a th:href="'/user?user='+${post.user.username}">
                                 <span class="author" th:text="${post.user.displayName}"></span>
                             </a>
                             <a href="#" class="ml-auto">

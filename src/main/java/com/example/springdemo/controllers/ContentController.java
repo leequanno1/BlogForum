@@ -41,11 +41,16 @@ public class ContentController {
         int userID = sessionUserID != null  ? Integer.parseInt(sessionUserID) : 0;
         Map<String, Object> content = articleService.getByArticleId(userID, articleID);
         List<Object> comments = commentService.getAll(articleID);
-        List<Map<String, Object>> nextArticle = articleService.getNextArticle(articleID);
+
+        Map<String, Object> user = (Map<String, Object>) content.get("user");
+        int userIdOfArticle = Integer.parseInt(user.get("userIdOfArticle").toString());
+        List<Map<String, Object>> nextArticle = articleService.getNextArticle(articleID, userIdOfArticle);
+
 
         model.addAttribute("content", content);
         model.addAttribute("comments", comments);
         model.addAttribute("nextArticle", nextArticle);
+        model.addAttribute("userID", userID);
 
         return "content";
     }

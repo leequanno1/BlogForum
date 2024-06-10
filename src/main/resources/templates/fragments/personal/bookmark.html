@@ -10,10 +10,13 @@
     <div>
         <h2>Bookmark go here</h2>
         <div class="posts">
-            <div th:each="post : ${postList}" class="post">
-                <a href="#">
-                    <h2 th:text="${post.title}"></h2>
-                </a>
+            <div th:each="post : ${postList}" class="post" th:id="'post'+${post.articleID}">
+                <div class="flex-space-between">
+                    <a th:href="'/content?id='+${post.articleID}">
+                        <h2 th:text="${post.title}"></h2>
+                    </a>
+                    <button th:attr="onclick=|handleRemoveBookmark(${post.articleID})|" id="removeBookmark" name="removeBookmark" type="button" class="btn btn-danger">Remove</button>
+                </div>
                 <div class="author-info d-flex align-items-center">
                     <a href="#">
                         <img
@@ -23,8 +26,8 @@
                     <a href="#">
                         <span class="author" th:text="${post.user.displayName}"></span>
                     </a>
-                    <a href="#" class="ml-auto">
-                        <span class="date" th:text="${post.createdAt}">April 30, 2024</span>
+                    <a th:href="@{/article(date=${post.createdAt})}" class="ml-auto">
+                        <span th:text="${post.dateFormated}" class="date"></span>
                     </a>
                 </div>
                 <div class="tags mt-2" >
@@ -41,7 +44,9 @@
             <!-- Add more posts here -->
         </div>
     </div>
+    <div id="messageBox" class="d-none"></div>
     <script src="/js/personalNavHandle.js"></script>
+    <script src="/js/handleRemoveBookmark.js"></script>
 </div>
 </body>
 </html>
