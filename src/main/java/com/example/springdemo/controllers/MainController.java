@@ -101,6 +101,7 @@ public class MainController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("popularTags", popularTags);
         model.addAttribute("remainingTags", remainingTags);
+        model.addAttribute("rout", "/article");
     }
 
 }

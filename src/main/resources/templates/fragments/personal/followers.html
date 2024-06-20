@@ -13,9 +13,8 @@
             <div class="card mb-3" style="width: 16rem;" th:each="user : ${userList}">
                 <img th:src="${user.AvatarURL}" class="card-img-top" alt="...">
                 <div class="card-body">
-                    <h5 th:text="${user.DisplayName}" class="card-title"></h5>
+                    <a th:href="'/user?user='+${user.Username}"><h5 th:text="${user.DisplayName}" class="card-title"></h5></a>
                     <p th:text="'@'+${user.Username}" class="card-text"></p>
-                    <a href="#" class="btn btn-primary">Bỏ theo dõi</a>
                 </div>
             </div>
         </div>

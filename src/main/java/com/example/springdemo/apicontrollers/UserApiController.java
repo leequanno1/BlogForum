@@ -286,6 +286,12 @@ public class UserApiController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Send authentication code failure."));
     }
 
+    /**
+     * Endpoint to unfollow a user
+     *
+     * @param requestBody the request body containing user IDs
+     * @return ResponseEntity indicating the status of the operation
+     */
     @PostMapping("api/user/unfollowUser")
     public ResponseEntity unfollowUser(@RequestBody Map<String, String> requestBody) {
         int userId = 0;
@@ -306,5 +312,24 @@ public class UserApiController {
         }
 
     }
+
+    /**
+     * Endpoint to follow a user
+     *
+     * @param request the request body containing user IDs
+     * @return ResponseEntity indicating the status of the operation
+     */
+    @PostMapping("api/user/followUser")
+    public ResponseEntity<?> followUser(@RequestBody Map<String, Integer> request) {
+        int followerId = request.get("uid");
+        int followedUserId = request.get("flid");
+        int success = userService.followUser(followerId, followedUserId);
+        if (success == 1) {
+            return ResponseEntity.ok("Followed successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to follow user");
+        }
+    }
+
 
 }

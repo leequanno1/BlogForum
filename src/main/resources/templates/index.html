@@ -38,7 +38,7 @@
                         <div th:each="article: ${articles}">
 
                             <div class="post">
-                                <a href="#">
+                                <a th:href="@{/content(id=${article.articleID})}">
                                     <h2 th:text="${article.title}"></h2>
                                 </a>
                                 <div class="author-info d-flex align-items-center">
@@ -50,7 +50,10 @@
                                              src="https://res.cloudinary.com/ddczpe6gq/image/upload/v1716959781/modfziyc6jesknmgizok.jpg"
                                              alt="Default Avatar" class="avatar mr-2">
                                     </a>
-                                    <a href="#">
+                                    <a th:if="${userInfo == null || userInfo.Username != article.user.username}" th:href="'/user?user='+${article.user.username}">
+                                        <span th:text="${article.user.displayName}" class="author"></span>
+                                    </a>
+                                    <a th:unless="${userInfo == null || userInfo.Username != article.user.username}" href="/personal">
                                         <span th:text="${article.user.displayName}" class="author"></span>
                                     </a>
                                     <a th:href="@{/article(date=${article.createdAt})}" class="ml-auto">
@@ -102,31 +105,7 @@
 
             </div>
 
-            <!-- Pagination -->
-            <div class="row" th:if="${totalPages > 1}">
-                <div class="col-12">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                <a class="page-link" th:href="@{/article(page=${currentPage - 1}, tagName=${param.tagName}, date=${param.date}, title=${param.title})}" tabindex="-1">Previous</a>
-                            </li>
-                            <li class="page-item" th:if="${currentPage > 1}">
-                                <a class="page-link" th:href="@{/article(page=1, tagName=${param.tagName}, date=${param.date}, title=${param.title})}">First</a>
-                            </li>
-                            <li class="page-item" th:each="pageNum : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 > totalPages ? totalPages : currentPage + 2)}"
-                                th:classappend="${pageNum == currentPage} ? 'active'">
-                                <a class="page-link" th:href="@{/article(page=${pageNum}, tagName=${param.tagName}, date=${param.date}, title=${param.title})}" th:text="${pageNum}"></a>
-                            </li>
-                            <li class="page-item" th:if="${currentPage < totalPages}">
-                                <a class="page-link" th:href="@{/article(page=${totalPages}, tagName=${param.tagName}, date=${param.date}, title=${param.title})}">Last</a>
-                            </li>
-                            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                <a class="page-link" th:href="@{/article(page=${currentPage + 1}, tagName=${param.tagName}, date=${param.date}, title=${param.title})}">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
+            <div th:replace="fragments/total_pages :: total_page"></div>
 
 
 
@@ -136,7 +115,7 @@
     <!-- Footer -->
     <footer class="bg-dark text-light py-3">
         <div class="container">
-            <p class="m-0">&copy; 2024 Viblo Clone</p>
+            <p class="m-0">&copy; 2024 Blog Forum</p>
         </div>
     </footer>
 

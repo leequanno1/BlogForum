@@ -15,11 +15,11 @@
 
 <body>
     <!-- Header -->
-    <div th:if="${userInfo == null}" >
+    <div th:if="${userInfo == null}">
         <div th:replace="fragments/unlogged_header :: unlogged_header"></div>
     </div>
     <div th:if="${userInfo != null}">
-        <div  th:replace="fragments/logged_header :: logged_header"></div>
+        <div th:replace="fragments/logged_header :: logged_header"></div>
     </div>
 
     <!-- Main Content -->
@@ -29,64 +29,71 @@
                 <!-- Sidebar -->
                 <div class="col-lg-2 sidebar">
                     <div class="d-flex flex-column align-items-center sticky-top">
-                        <label id="upvote" for="isUpvote" class="btn btn-outline-success mb-2"><i class="fa-solid fa-caret-up"></i></label>
-                        <input id="isUpvote" class="d-none" type="checkbox">
+                        <label id="upvote" for="isUpvote" th:classappend="${content.votedValue != null and content.votedValue == true} ? 'btn-success' : 'btn-outline-success' " class="btn mb-2"><i class="fa-solid fa-caret-up"></i></label>
+                        <input id="isUpvote" class="d-none" type="checkbox" th:checked="${content.votedValue != null and content.votedValue == true}">
 
-                        <span class="mb-2"><span id="vote">0</span> Votes</span>
+                        <span class="mb-2">
+                            <span id="vote" th:text="${content.votes}"></span>
+                        </span>
 
-                        <label id="downvote" for="isDownvote" class="btn btn-outline-danger mb-2 "><i class="fa-solid fa-caret-down"></i></label>
-                        <input id="isDownvote" class="d-none" type="checkbox">
+                        <label id="downvote" for="isDownvote" th:classappend="${content.votedValue != null and content.votedValue == false} ? 'btn-danger' : 'btn-outline-danger' " class="btn mb-2"><i class="fa-solid fa-caret-down"></i></label>
+                        <input id="isDownvote" class="d-none" type="checkbox" th:checked="${content.votedValue != null and content.votedValue == false}">
 
-                        <label id="bookmark" for="isBookmark" class="btn btn-outline-primary mb-2 "><i id="bookmarkIcon" class="far fa-bookmark"></i></label>
-                        <input id="isBookmark" class="d-none" type="checkbox">
+
+                        <label id="bookmark" for="isBookmark" class="btn mb-2 btn-outline-primary">
+                            <i id="bookmarkIcon" class="far fa-bookmark"
+                               th:classappend="${content.isBookMark} ? ' fa-solid' : ''"></i>
+                        </label>
+                        <input id="isBookmark" class="d-none" type="checkbox" th:checked="${content.isBookMark}">
+
                     </div>
                 </div>
                 <!-- Content -->
                 <div class="col-lg-9">
                     <article class="mb-5">
-                        <h1 class="mb-3">Tiêu đề bài viết</h1>
+                        <h1 class="mb-3" th:text="${content.title}">Tiêu đề bài viết</h1>
                         <div class="d-flex align-items-center mb-3 sticky-top author-info">
-                            <img src="https://scontent.fdad3-1.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=_IqS1bxHi_0Q7kNvgFDLGOH&_nc_ht=scontent.fdad3-1.fna&oh=00_AfB2ZQ5Z3SXf1QSPY9uiRG-zOcfPRnVfnAYlbZ2zLsuL6g&oe=66376F03"
-                                alt="Avatar" class="avatar mr-3">
+                            <img th:src="${content.user.avatarURL}"
+                                 alt="Avatar" class="avatar mr-3">
                             <div>
+                                <input type="hidden" id="userIDofArticle" th:value="${content.user.userIdOfArticle}">
                                 <span class="text-muted">Tác giả: </span>
-                                <a href="#"><span>Author Name</span></a>
+                                <a th:href="'/user?user='+${content.user.username}"><span th:text="${content.user.displayName}">Author Name</span></a>
                             </div>
-                            <div class="ml-auto">
-                                <!-- <button type="button" class="btn btn-primary">Theo dõi</button> -->
-                                <label id="follow" for="isFollow" class="btn btn-primary">Theo dõi</label>
-                                <input id="isFollow" class="d-none" type="checkbox">
+                            <div class="ml-auto" th:if="${content.user.userIdOfArticle != userID}">
+                                <label id="follow" for="isFollow" class="btn btn-primary"
+                                       th:text="${content.isFollow ? 'Đã theo dõi' : 'Theo dõi'}"></label>
+                                <input id="isFollow" class="d-none" type="checkbox" th:checked="${content.isFollow}"
+                                       th:value="${content.isFollow}">
                             </div>
+
                         </div>
-                        <p class="text-muted mb-4">Thời gian đăng bài viết: April 30, 2024</p>
-                        <p>
+                        <p class="text-muted mb-4">Thời gian đăng bài viết: <span th:text="${content.dateFormated}"></span>
+                        </p>
+
+                        <p th:utext="${content.content}">
                             Nội dung bài viết...
                         </p>
-                        <!-- Next Posts -->
+                        <!--                         Next Posts-->
                         <div class="mt-4">
                             <h3>Bài viết tiếp theo</h3>
-                            <div class="d-flex flex-wrap justify-content-between">
+                            <div class="d-flex">
+                                <div th:if="${nextArticle.size() == 0}">
+                                    <p>Không có bài viết tiếp theo.</p>
+                                </div>
                                 <!-- Sample next post -->
-                                <div class="card mb-3 next-post">
+                                <div class="card mb-3 next-post" th:each="articleItem : ${nextArticle}">
                                     <div class="card-body">
-                                        <a href="#"><h5 class="card-title">Tiêu đề bài viết</h5></a>
-                                        <p class="card-text">Tác giả: <a href="#">Author Name</a></p>
-                                        <p class="card-text">100 Votes</p>
-                                    </div>
-                                </div>
-                                <!-- Add more next posts here -->
-                                <div class="card mb-3 next-post">
-                                    <div class="card-body">
-                                        <a href="#"><h5 class="card-title">Tiêu đề bài viết</h5></a>
-                                        <p class="card-text">Tác giả: <a href="#">Author Name</a></p>
-                                        <p class="card-text">100 Votes</p>
-                                    </div>
-                                </div>
-                                <div class="card mb-3 next-post">
-                                    <div class="card-body">
-                                        <a href="#"><h5 class="card-title">Tiêu đề bài viết</h5></a>
-                                        <p class="card-text">Tác giả: <a href="#">Author Name</a></p>
-                                        <p class="card-text">100 Votes</p>
+                                        <a th:href="@{/content(id=${articleItem.articleID})}">
+                                            <h5 class="card-title" th:text="${articleItem.title}">Tiêu đề bài viết</h5>
+                                        </a>
+                                        <p class="card-text">Tác giả: <a th:href="'/user?user='+${articleItem.user.username}" th:text="${articleItem.user.displayName}">Author
+                                            Name</a></p>
+                                        <p class="card-text">
+                                            <span th:text="${articleItem.votes}"></span>
+                                            <span th:if="${articleItem.votes > 2}"> Votes</span>
+                                            <span th:unless="${articleItem.votes > 2}"> Vote</span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -97,26 +104,30 @@
                             <!-- Form bình luận -->
                             <div>
                                 <div class="form-group">
-                                    <textarea id="commentContent" class="form-control" rows="3"
-                                        placeholder="Nhập bình luận của bạn"></textarea>
+                                        <textarea id="commentContent" class="form-control" rows="3"
+                                                  placeholder="Nhập bình luận của bạn"></textarea>
                                 </div>
                                 <button type="button" id="sendCommentButton" class="btn btn-primary">Gửi</button>
                             </div>
                             <!-- Danh sách bình luận -->
                             <div id="commentList" class="comment-list mt-3">
-                                <!-- Mỗi comment -->
-                                <div class="comment mb-3">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <img src="https://scontent.fdad3-1.fna.fbcdn.net/v/t39.30808-6/368392226_1430093634216646_2932326551890599667_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=_IqS1bxHi_0Q7kNvgFDLGOH&_nc_ht=scontent.fdad3-1.fna&oh=00_AfB2ZQ5Z3SXf1QSPY9uiRG-zOcfPRnVfnAYlbZ2zLsuL6g&oe=66376F03"
-                                            alt="Avatar" class="avatar mr-3">
-                                        <div>
-                                            <span class="font-weight-bold">User Name</span>
+
+                                <div th:each="comment: ${comments}">
+                                    <!-- Mỗi comment -->
+                                    <div class="comment mb-3">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <img th:src="${comment.user.avatarUrl}"
+                                                 alt="Avatar" class="avatar mr-3">
+                                            <div>
+                                                <span class="font-weight-bold" th:text="${comment.user.displayName}">User Name</span>
+                                            </div>
                                         </div>
+                                        <p th:text="${comment.content}">Bình luận của người dùng...</p>
                                     </div>
-                                    <p>Bình luận của người dùng...</p>
                                 </div>
-                                <!-- Thêm các comment khác tại đây -->
+
                             </div>
+
                         </div>
                     </article>
                 </div>
@@ -126,10 +137,10 @@
         </div>
     </main>
 
-    <!-- Footer -->
+<!-- Footer -->
     <footer class="bg-dark text-light py-3">
         <div class="container">
-            <p class="m-0">&copy; 2024 Viblo Clone</p>
+            <p class="m-0">&copy; 2024 Blog Forum</p>
         </div>
     </footer>
 
@@ -140,6 +151,16 @@
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <script th:src="@{js/header.js}"></script>
     <script th:src="@{js/content.html.js}"></script>
+
 </body>
+
+    <div id="messageBoxForContentPage">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <div id="containMessageContent">
+            <h5>Warning</h5>
+            <p id="messageTitle">Vui lòng đăng nhập để thực hiện chức năng này</p>
+        </div>
+        <i class="fa-solid fa-xmark" id="btnCloseMessageBox"></i>
+    </div>
 
 </html>

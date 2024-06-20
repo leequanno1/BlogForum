@@ -11,10 +11,12 @@
         <h2>Followed users go here</h2>
         <div class="flex-user-container">
             <div class="card mb-3" style="width: 16rem;" th:each="user : ${userList}" th:id="'user'+${user.UserID}">
-<!--                <img th:src="${user.AvatarURL}" class="card-img-top" alt="...">-->
-                <img src="https://res.cloudinary.com/ddczpe6gq/image/upload/v1716959781/modfziyc6jesknmgizok.jpg" class="card-img-top" alt="...">
+                <div class="card-image-container">
+                    <img th:if="${user.AvatarURL != null}" th:src="${user.AvatarURL}" class="card-img-top" alt="...">
+                    <img th:unless="${user.AvatarURL != null}" src="https://res.cloudinary.com/ddczpe6gq/image/upload/v1716959781/modfziyc6jesknmgizok.jpg" class="card-img-top" alt="...">
+                </div>
                 <div class="card-body">
-                    <h5 th:text="${user.DisplayName}" class="card-title"></h5>
+                    <a th:href="'/user?user='+${user.Username}"><h5 th:text="${user.DisplayName}" class="card-title"></h5></a>
                     <p th:text="'@'+${user.Username}" class="card-text"></p>
                     <button th:attr="onclick=|handleUnfollow(${user.UserID})|" class="btn btn-primary">Bỏ theo dõi</button>
                 </div>

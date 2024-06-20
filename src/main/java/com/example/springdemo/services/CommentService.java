@@ -1,7 +1,6 @@
 package com.example.springdemo.services;
 
 import java.sql.Connection;
-import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +17,8 @@ public class CommentService extends DatabaseService {
                                                         "FROM [Comment] AS cm\n" +
                                                         "INNER JOIN [User] AS us \n" +
                                                         "ON cm.[UserID] = us.[UserID]\n" +
-                                                        "WHERE cm.[ArticleID] = ?";
+                                                        "WHERE cm.[ArticleID] = ?" +
+                                                        "ORDER BY cm.[CreatedAt] DESC";
 
     /**
      * This constance is a SQL query to get comment's

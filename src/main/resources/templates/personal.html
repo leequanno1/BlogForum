@@ -46,6 +46,7 @@
             <div class="content" th:if="${nav == 'followedposts'}" th:include="fragments/personal/followed_posts :: followedposts"></div>
             <div class="content" th:if="${nav == 'followedusers'}" th:include="fragments/personal/followed_users :: followedusers"></div>
             <div class="content" th:if="${nav == 'follower'}" th:include="fragments/personal/followers :: followers"></div>
+            <div th:if="${nav == 'posts' || nav == 'bookmark'}" th:replace="/fragments/total_pages :: total_page"></div>
 
 
         </div>
@@ -54,7 +55,7 @@
     <!-- Footer -->
     <footer class="bg-dark text-light py-3">
         <div class="container">
-            <p class="m-0">&copy; 2024 Viblo Clone</p>
+            <p class="m-0">&copy; 2024 Blog Forum</p>
         </div>
     </footer>
 

@@ -208,6 +208,29 @@ public class UserService extends DatabaseService {
         return userInfo;
     }
 
+    public Map<String, Object> getAccountInfoByUsername(String username) {
+        Map<String, Object> userInfo = new HashMap<>();
+
+        try (Connection connection = getDataSource().getConnection()) {
+            String query = "SELECT UserID, Username, DisplayName, AvatarURL FROM \"User\" WHERE Username = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, username);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        userInfo.put("UserID", resultSet.getInt("UserID"));
+                        userInfo.put("Username", resultSet.getString("Username"));
+                        userInfo.put("DisplayName", resultSet.getString("DisplayName"));
+                        userInfo.put("AvatarURL", resultSet.getString("AvatarURL"));
+                    }
+                }
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return userInfo;
+    }
+
 
     /**
      * Retrieves all account information associated with a UserID from the database.
@@ -348,7 +371,7 @@ public class UserService extends DatabaseService {
     /**
      * Changes the password of the user with the given UserID.
      *
-     * @param email The email of the user.
+     * @param email       The email of the user.
      * @param newPassword The new password to be set.
      * @return SUCCESS if password is changed successfully, FAILURE if password change fails.
      */
@@ -374,7 +397,7 @@ public class UserService extends DatabaseService {
     /**
      * Changes the password of the user with the given UserID.
      *
-     * @param username The username of the user.
+     * @param username    The username of the user.
      * @param newPassword The new password to be set.
      * @return SUCCESS if password is changed successfully, FAILURE if password change fails.
      */
@@ -400,24 +423,23 @@ public class UserService extends DatabaseService {
     /**
      * Change user information by using userid
      *
-     * @param userId the Integer user id
-     * @param avatarURL the String avartar url
+     * @param userId      the Integer user id
+     * @param avatarURL   the String avartar url
      * @param displayName the String display name
      * @param description the String description
-     *
      * @return int 1 if SUCCESS or else if FAILURE
-     * */
+     */
     public int changeInfo(int userId, String avatarURL, String displayName, String description) {
         String SQL = "UPDATE [User] SET AvatarURL = ?, DisplayName = ?, [Description] = ? \n" +
                 "WHERE UserID = ?";
-        try (Connection connection = getDataSource().getConnection()){
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)){
-                preparedStatement.setString(1,avatarURL);
-                preparedStatement.setString(2,displayName);
-                preparedStatement.setString(3,description);
-                preparedStatement.setInt(4,userId);
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+                preparedStatement.setString(1, avatarURL);
+                preparedStatement.setString(2, displayName);
+                preparedStatement.setString(3, description);
+                preparedStatement.setInt(4, userId);
                 int rowUpdated = preparedStatement.executeUpdate();
-                return rowUpdated > 0? 1 : -1;
+                return rowUpdated > 0 ? 1 : -1;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -429,23 +451,87 @@ public class UserService extends DatabaseService {
     /**
      * Unfollow user by using userid and followed id
      *
-     * @param userId int user ID
+     * @param userId     int user ID
      * @param followedId int followed user ID
-     *
      * @return int 1 if SUCCESS or else if FAILURE
-     * */
+     */
     public int unfollowUser(int userId, int followedId) {
         String SQL = "DELETE FROM [Follow] WHERE [FollowerID] = ? AND [FollowedUserID] = ?";
-        try (Connection connection = getDataSource().getConnection()){
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)){
-                preparedStatement.setInt(1,userId);
-                preparedStatement.setInt(2,followedId);
+        try (Connection connection = getDataSource().getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+                preparedStatement.setInt(1, userId);
+                preparedStatement.setInt(2, followedId);
                 int rowUpdated = preparedStatement.executeUpdate();
-                return rowUpdated > 0? 1 : -1;
+                return rowUpdated > 0 ? 1 : -1;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return 1;
     }
+
+//<<<<<<< HEAD
+    /**
+     * Method to make a user follow another user
+     *
+     * @param followerId     the ID of the user who is following
+     * @param followedUserId the ID of the user who is being followed
+     * @return 1 if the follow operation is successful, otherwise 0
+     */
+    public int followUser(int followerId, int followedUserId) {
+        try (Connection conn = getDataSource().getConnection();
+             PreparedStatement ps = conn.prepareStatement("INSERT INTO Follow (FollowerID, FollowedUserID) VALUES (?, ?)")) {
+            ps.setInt(1, followerId);
+            ps.setInt(2, followedUserId);
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                return 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+
+    /**
+     * Method to check if a user is following another user
+     *
+     * @param followerId     the ID of the user who is following
+     * @param followedUserId the ID of the user who is being followed
+     * @return true if the user is following the other user, otherwise false
+     */
+    public boolean isFollowingUser(int followerId, int followedUserId) {
+        String query = "SELECT COUNT(*) AS count FROM Follow WHERE FollowerID = ? AND FollowedUserID = ?";
+        try (Connection connection = getDataSource().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, followerId);
+            preparedStatement.setInt(2, followedUserId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int count = resultSet.getInt("count");
+                return count > 0; // Return true if the count is greater than 0 (user is following), otherwise false
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Return false by default or in case of any exception
+    }
+
+//=======
+//    public boolean isFollowed(int follwerId, int followedId) {
+//        String SQL = "SELECT COUNT(FollowID) AS IsExist FROM [Follow] WHERE FollowerID = ? AND FollowedUserID = ?";
+//        try (Connection connection = getDataSource().getConnection()){
+//            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)){
+//                preparedStatement.setInt(1,follwerId);
+//                preparedStatement.setInt(2,followedId);
+//                ResultSet resultSet = preparedStatement.executeQuery();
+//                return resultSet.getInt("IsExist") > 0;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
+//>>>>>>> feature/10-add-user-info-page
 }
