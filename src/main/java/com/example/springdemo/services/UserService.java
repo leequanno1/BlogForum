@@ -348,12 +348,13 @@ public class UserService extends DatabaseService {
         }
 
         try (Connection connection = getDataSource().getConnection()) {
-            String query = "INSERT INTO [User] ([Username], [Email], [Password], [DisplayName]) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO [User] ([Username], [Email], [Password], [DisplayName], [AvatarURL]) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, username);
                 statement.setString(2, email);
                 statement.setString(3, EncoderUtil.encode(password));
                 statement.setString(4, username);
+                statement.setString(5, "https://res.cloudinary.com/ddczpe6gq/image/upload/v1716959781/modfziyc6jesknmgizok.jpg");
 
                 int rowsAffected = statement.executeUpdate();
                 if (rowsAffected > 0) {
@@ -366,6 +367,8 @@ public class UserService extends DatabaseService {
 
         return FAILURE;
     }
+
+
 
 
     /**

@@ -1,5 +1,6 @@
 package com.example.springdemo.config;
-import com.example.springdemo.filters.CustomFilter;
+import com.example.springdemo.filters.SessionFilter;
+import jakarta.servlet.Filter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,9 +9,9 @@ import org.springframework.context.annotation.Configuration;
 public class FilterConfig {
 
     @Bean
-    public FilterRegistrationBean<CustomFilter> customFilter() {
-        FilterRegistrationBean<CustomFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new CustomFilter());
+    public FilterRegistrationBean<Filter> sessionFilter() {
+        FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new SessionFilter());
         registrationBean.addUrlPatterns("/personal/*", "/posting/*");
         return registrationBean;
     }
