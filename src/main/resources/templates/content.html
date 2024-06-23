@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viblo Clone - Bài viết</title>
+    <title>Blog Forum - Post detail</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -57,7 +57,7 @@
                                  alt="Avatar" class="avatar mr-3">
                             <div>
                                 <input type="hidden" id="userIDofArticle" th:value="${content.user.userIdOfArticle}">
-                                <span class="text-muted">Tác giả: </span>
+                                <span class="text-muted">Author: </span>
                                 <a th:href="'/user?user='+${content.user.username}"><span th:text="${content.user.displayName}">Author Name</span></a>
                             </div>
                             <div class="ml-auto" th:if="${content.user.userIdOfArticle != userID}">
