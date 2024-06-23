@@ -19,7 +19,7 @@ public class EmailService {
 
 //    private final String sendGridApiKey = System.getenv("SENDGRID_API_KEY");
 
-    private final SendGrid sendGrid = new SendGrid("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");
+    private final SendGrid sendGrid = new SendGrid("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");
 
     /**
      * tokenServices is used to handle information of the token.

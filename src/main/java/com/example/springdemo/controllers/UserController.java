@@ -164,32 +164,34 @@ public class UserController {
         email = signUpForm.getEmail();
         tokenValue = signUpForm.getTokenValue();
 
-        int result = userService.createNewAccount(username, password, email);
-
         boolean resultCheckTokenValue = tokenService.isTokenValid(email, tokenValue);
 
         String signUpMessage = "";
 
-        if (result == UserService.USERNAME_EXISTS) {
-            signUpMessage = "Username already exists!";
-        }
-
-        if (result == UserService.EMAIL_EXISTS) {
-            signUpMessage = "Email already exists";
-        }
-
         if (!resultCheckTokenValue) {
             signUpMessage = "Invalid authentication code";
+        } else {
+            int result = userService.createNewAccount(username, password, email);
+
+            if (result == UserService.USERNAME_EXISTS) {
+                signUpMessage = "Username already exists!";
+            }
+
+            if (result == UserService.EMAIL_EXISTS) {
+                signUpMessage = "Email already exists";
+            }
+
+            if (result == UserService.FAILURE) {
+                signUpMessage = "Failed to create new account.";
+            }
+
+            if (result == UserService.SUCCESS) {
+                tokenService.deleteToken(email);
+                signUpMessage = "Create account successfully.";
+            }
         }
 
-        if (result == UserService.FAILURE) {
-            signUpMessage = "Failed to create new account.";
-        }
 
-        if (result == UserService.SUCCESS) {
-            tokenService.deleteToken(email);
-            signUpMessage = "Create account successfully.";
-        }
 
         redirectAttributes.addFlashAttribute("signUpMessage", signUpMessage);
         redirectAttributes.addFlashAttribute("signUpForm", signUpForm);
