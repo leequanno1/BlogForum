@@ -8,7 +8,7 @@
 <div th:fragment="followedusers">
     <link rel="stylesheet" href="/css/personal_users.css">
     <div>
-        <h2>Followed users go here</h2>
+        <h2>Your followed users</h2>
         <div class="flex-user-container">
             <div class="card mb-3" style="width: 16rem;" th:each="user : ${userList}" th:id="'user'+${user.UserID}">
                 <div class="card-image-container">

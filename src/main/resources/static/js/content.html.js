@@ -18,17 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let vote = document.getElementById("vote");
 
-// <<<<<<< HEAD
-// if(isUpvote.checked) {
-//     upvote.classList.add("btn-success");
-//     upvote.classList.remove("btn-outline-success");
-// }
-// if(isDownvote.checked) {
-//     downvote.classList.add("btn-danger");
-//     downvote.classList.remove("btn-outline-danger");
-// }
-
-// =======
     let commentContent = document.getElementById("commentContent");
     let sendCommentButton = document.getElementById("sendCommentButton");
     let commentList = document.getElementById("commentList");
@@ -86,9 +75,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isFollow != null) {
         isFollow.addEventListener("change", (e) => {
             if (isFollow.checked && getCookie("SessionUserID") != null) {
-                follow.innerText = "Đã theo dõi";
+                follow.innerText = "Followed";
             } else {
-                follow.innerText = "Theo dõi";
+                follow.innerText = "Follow";
             }
         })
     }

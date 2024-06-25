@@ -8,7 +8,7 @@
 <div th:fragment="bookmark">
     <link rel="stylesheet" href="/css/personal_posts.css">
     <div>
-        <h2>Bookmark go here</h2>
+        <h2>Your bookmarks</h2>
         <div class="posts">
             <div th:each="post : ${postList}" class="post" th:id="'post'+${post.articleID}">
                 <div class="flex-space-between">
