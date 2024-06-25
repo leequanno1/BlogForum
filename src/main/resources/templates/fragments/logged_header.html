@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-    <div th:fragment="logged_header">
-        <header class="text-light bg-info py-3 header-shadow">
-            <div class="container d-flex justify-content-between align-items-center">
-                <a href="/" class="text-light logo">Web Logo</a>
-                <nav>
-                    <ul class="list-unstyled d-flex m-0 align-items-center">
-                        <li class="mr-3">
-                            <form action="/article" method="get">
-                                <div class="input-group">
-                                    <input type="text" name="title" class="form-control" placeholder="Search..." aria-label="Recipient's username"
-                                           th:value="${title}" aria-describedby="button-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-secondary text-light" type="submit" id="button-addon2"><i
-                                                class="fa-solid fa-magnifying-glass"></i></button>
-                                    </div>
+<div th:fragment="logged_header">
+    <header class="text-light bg-info py-3 header-shadow">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="/" class="text-light logo">Blog Forum</a>
+            <nav>
+                <ul class="list-unstyled d-flex m-0 align-items-center">
+                    <li class="mr-3">
+                        <form action="/article" method="get">
+                            <div class="input-group">
+                                <input type="text" name="title" class="form-control" placeholder="Search..."
+                                       aria-label="Recipient's username"
+                                       th:value="${title}" aria-describedby="button-addon2">
+                                <div class="input-group-append">
+                                    <button class="btn btn-secondary text-light" type="submit" id="button-addon2"><i
+                                            class="fa-solid fa-magnifying-glass"></i></button>
                                 </div>
-                            </form>
-                        </li>
-                        <li class="mr-3"><a href="/posting" class="text-light">Viết bài</a></li>
-<!--                        <li class="mr-3"><a href="#" class="text-light">Thông báo</a></li>-->
-                        <li>
-                            <div>
-                                <label class="m-0" for="smallAvt">
-                                    <img th:src="${userInfo.AvatarURL}"
-                                         alt="Avatar" class="profile-avatar avatar-small mr-0">
-                                </label>
-                                <input type="checkbox" class="d-none" name="smallAvt" id="smallAvt">
-                                <span class="personal-box-container">
+                            </div>
+                        </form>
+                    </li>
+                    <li class="mr-3"><a href="/posting" class="text-light">Create articles</a></li>
+                    <!--                        <li class="mr-3"><a href="#" class="text-light">Thông báo</a></li>-->
+                    <li>
+                        <div>
+                            <label class="m-0" for="smallAvt">
+                                <img th:src="${userInfo.AvatarURL}"
+                                     alt="Avatar" class="profile-avatar avatar-small mr-0">
+                            </label>
+                            <input type="checkbox" class="d-none" name="smallAvt" id="smallAvt">
+                            <span class="personal-box-container">
                                 <div class="personal-box personal-box-hide card bg-info" id="personalBox">
                                     <div class="d-flex justify-content-start">
                                         <div class="avatar-with-name">
@@ -42,21 +43,21 @@
                                     </div>
                                     <a href="/personal" class="mb-3 text-light">
                                         <i class="personal-icon fa-solid fa-user"></i>
-                                        Trang cá nhân
+                                        Personal page
                                     </a>
                                     <a href="/logout" class="text-light">
                                         <i class="personal-icon fa-solid fa-arrow-right-from-bracket"></i>
-                                        Đăng xuất
+                                        Log out
                                     </a>
                                 </div>
                             </span>
-                                </select>
-                            </div>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </header>
-    </div>
+                            </select>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+</div>
 </body>
 </html>

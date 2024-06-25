@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Cá Nhân</title>
+    <title>Personal page</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -30,15 +30,15 @@
                         <p class="text-muted" th:text="'@'+${userInfo.Username}"></p>
                     </div>
                 </div>
-                <a class="btn btn-primary btn-justify" href="/personal/modify">Sửa</a>
+                <a class="btn btn-primary btn-justify" href="/personal/modify">Edit</a>
             </div>
             
             <!-- Navigation Bar -->
             <nav class="nav nav-pills justify-content-left mb-3 ">
-                <a id="navPosts" class="nav-link" href="/personal/posts">Bài Viết</a>
+                <a id="navPosts" class="nav-link" href="/personal/posts">Articles</a>
                 <a id="navBookmark" class="nav-link" href="/personal/bookmark">Bookmark</a>
-                <a id="navFollowedUsers" class="nav-link" href="/personal/followedusers">Người Đang Theo Dõi</a>
-                <a id="navFollowers" class="nav-link" href="/personal/followers">Người Theo Dõi</a>
+                <a id="navFollowedUsers" class="nav-link" href="/personal/followedusers">Following user</a>
+                <a id="navFollowers" class="nav-link" href="/personal/followers">Follower</a>
             </nav>
             <!-- Content -->
             <div class="content" th:if="${nav == 'posts'}" th:include="fragments/personal/posts :: posts"></div>

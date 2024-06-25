@@ -51,7 +51,7 @@
                 <!-- Content -->
                 <div class="col-lg-9">
                     <article class="mb-5">
-                        <h1 class="mb-3" th:text="${content.title}">Tiêu đề bài viết</h1>
+                        <h1 class="mb-3" th:text="${content.title}">Article title</h1>
                         <div class="d-flex align-items-center mb-3 sticky-top author-info">
                             <img th:src="${content.user.avatarURL}"
                                  alt="Avatar" class="avatar mr-3">
@@ -62,13 +62,13 @@
                             </div>
                             <div class="ml-auto" th:if="${content.user.userIdOfArticle != userID}">
                                 <label id="follow" for="isFollow" class="btn btn-primary"
-                                       th:text="${content.isFollow ? 'Đã theo dõi' : 'Theo dõi'}"></label>
+                                       th:text="${content.isFollow ? 'Followed' : 'Follow'}"></label>
                                 <input id="isFollow" class="d-none" type="checkbox" th:checked="${content.isFollow}"
                                        th:value="${content.isFollow}">
                             </div>
 
                         </div>
-                        <p class="text-muted mb-4">Thời gian đăng bài viết: <span th:text="${content.dateFormated}"></span>
+                        <p class="text-muted mb-4">Posting time: <span th:text="${content.dateFormated}"></span>
                         </p>
 
                         <p th:utext="${content.content}">
@@ -76,18 +76,18 @@
                         </p>
                         <!--                         Next Posts-->
                         <div class="mt-4">
-                            <h3>Bài viết tiếp theo</h3>
+                            <h3>Next article</h3>
                             <div class="d-flex">
                                 <div th:if="${nextArticle.size() == 0}">
-                                    <p>Không có bài viết tiếp theo.</p>
+                                    <p>There are no follow-up posts.</p>
                                 </div>
                                 <!-- Sample next post -->
                                 <div class="card mb-3 next-post" th:each="articleItem : ${nextArticle}">
                                     <div class="card-body">
                                         <a th:href="@{/content(id=${articleItem.articleID})}">
-                                            <h5 class="card-title" th:text="${articleItem.title}">Tiêu đề bài viết</h5>
+                                            <h5 class="card-title" th:text="${articleItem.title}">Article title</h5>
                                         </a>
-                                        <p class="card-text">Tác giả: <a th:href="'/user?user='+${articleItem.user.username}" th:text="${articleItem.user.displayName}">Author
+                                        <p class="card-text">Author: <a th:href="'/user?user='+${articleItem.user.username}" th:text="${articleItem.user.displayName}">Author
                                             Name</a></p>
                                         <p class="card-text">
                                             <span th:text="${articleItem.votes}"></span>
@@ -100,12 +100,12 @@
                         </div>
                         <!-- Bình luận -->
                         <div class="comments mt-4">
-                            <h3>Bình luận</h3>
+                            <h3>Comments</h3>
                             <!-- Form bình luận -->
                             <div>
                                 <div class="form-group">
                                         <textarea id="commentContent" class="form-control" rows="3"
-                                                  placeholder="Nhập bình luận của bạn"></textarea>
+                                                  placeholder="Enter your comment"></textarea>
                                 </div>
                                 <button type="button" id="sendCommentButton" class="btn btn-primary">Gửi</button>
                             </div>
@@ -122,7 +122,7 @@
                                                 <span class="font-weight-bold" th:text="${comment.user.displayName}">User Name</span>
                                             </div>
                                         </div>
-                                        <p th:text="${comment.content}">Bình luận của người dùng...</p>
+                                        <p th:text="${comment.content}">Comment of the user...</p>
                                     </div>
                                 </div>
 
@@ -158,7 +158,7 @@
         <i class="fa-solid fa-circle-exclamation"></i>
         <div id="containMessageContent">
             <h5>Warning</h5>
-            <p id="messageTitle">Vui lòng đăng nhập để thực hiện chức năng này</p>
+            <p id="messageTitle">Please log in to perform this function</p>
         </div>
         <i class="fa-solid fa-xmark" id="btnCloseMessageBox"></i>
     </div>

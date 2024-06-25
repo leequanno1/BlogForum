@@ -10,7 +10,8 @@
 <body>
 <div th:replace="fragments/logged_header :: logged_header"></div>
 <main class="main-editor">
-    <input id="articleTitle" type="text" class="form-control mb-3" placeholder="Enter article title" aria-label="Recipient's username" aria-describedby="basic-addon2">
+    <input id="articleTitle" type="text" class="form-control mb-3" placeholder="Enter article title"
+           aria-label="Recipient's username" aria-describedby="basic-addon2">
     <div id="alert1" class="alert alert-danger hide-alert" role="alert">
         You must enter article's title.
     </div>
@@ -19,14 +20,16 @@
             <div id="tagContainer" class="tag-container">
             </div>
             <div class="input-tag-container">
-                <input type="text" id="inputTag" class="form-control tag-input" placeholder="Add your tag here. Maximum is 5 and minimum is 1. Tag begin with '#'." aria-label="Recipient's username" aria-describedby="basic-addon2">
+                <input type="text" id="inputTag" class="form-control tag-input"
+                       placeholder="Add your tag here. Maximum is 5 and minimum is 1. Tag begin with '#'."
+                       aria-label="Recipient's username" aria-describedby="basic-addon2">
                 <div id="scrollBar" class="scroll-bar scroll-bar-hide">
                 </div>
                 <input type="hidden" name="tagList" id="tagList">
             </div>
         </div>
         <div class="input-group-append">
-            <button id="postArticle" class="btn btn-primary" type="button" >Post</button>
+            <button id="postArticle" class="btn btn-primary" type="button">Post</button>
         </div>
     </div>
     <div id="alert2" class="alert alert-danger hide-alert" role="alert">
