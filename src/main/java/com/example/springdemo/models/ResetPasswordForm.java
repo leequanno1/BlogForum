@@ -1,4 +1,4 @@
-package com.example.springdemo.form;
+package com.example.springdemo.models;
 
 public class ResetPasswordForm {
 

@@ -1,4 +1,4 @@
-package com.example.springdemo.models;
+package com.example.springdemo.services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;

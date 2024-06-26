@@ -1,4 +1,5 @@
 .main-editor {
+    min-height: 100vh;
     margin-top: 90px;
     margin-inline: 20px;
 }

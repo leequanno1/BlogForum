@@ -1,6 +1,6 @@
 package com.example.springdemo.controllers;
 
-import com.example.springdemo.form.ChangePasswordForm;
+import com.example.springdemo.models.ChangePasswordForm;
 import com.example.springdemo.services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

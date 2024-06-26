@@ -1,15 +1,12 @@
 package com.example.springdemo.services;
 
 import com.cloudinary.utils.ObjectUtils;
-import com.example.springdemo.models.SingletonCloudinary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.util.*;
 
 @Service

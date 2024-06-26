@@ -1,9 +1,9 @@
 package com.example.springdemo.controllers;
 
-import com.example.springdemo.form.ForgotPasswordForm;
-import com.example.springdemo.form.LoginForm;
-import com.example.springdemo.form.ResetPasswordForm;
-import com.example.springdemo.form.SignUpForm;
+import com.example.springdemo.models.ForgotPasswordForm;
+import com.example.springdemo.models.LoginForm;
+import com.example.springdemo.models.ResetPasswordForm;
+import com.example.springdemo.models.SignUpForm;
 import com.example.springdemo.services.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
